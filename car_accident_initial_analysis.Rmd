@@ -24,8 +24,14 @@ national_data <- read_xlsx("data/nhtsa_yearly_national_stats.xlsx")
 
 You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r baton_rouge}
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r seattle}
+
+```
+
+```{r tempe}
+
+```
