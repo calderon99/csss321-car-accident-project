@@ -44,11 +44,11 @@ primary_factors_br <- unique(br_data$PRIMARY.FACTOR)
 br_fatality <- subset(br_data, subset = (FATALITY == "1"))
 br_no_fatality <- subset(br_data, subset = (FATALITY == "0"))
 
-br_location_data <- br_data %>% 
-  group_by(br_data$PRIMARY.FACTOR) %>%
-  count()
-br_location_plot <- ggplot(br_location_data, mapping = aes(x= br_location_data$`br_data$PRIMARY.FACTOR`, y = n))+
-  geom_boxplot()
+#br_location_data <- br_data %>% 
+#  group_by("primary_reason"  = br_data$PRIMARY.FACTOR) %>%
+#  count()
+#br_location_plot <- ggplot(br_location_data, aes(x = br_location_data$primary_reason, fill = n))+
+#  stat_count(width = 0.5)
 
 
 ```
