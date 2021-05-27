@@ -67,7 +67,17 @@ seattle_filter <- subset(seattle_data$date, subset = (seattle_data$date >= "2012
 tempe_filter <- tempe_data %>%
   select(Year, Totalinjuries, Totalfatalities, Injuryseverity, AlcoholUse_Drv1,
          DrugUse_Drv1, Unitaction_One, Violation1_Drv1, StreetName, CrossStreet, Lightcondition,
-         JunctionRelation,Weather, SurfaceCondition)
+         JunctionRelation,Weather, SurfaceCondition) 
+
+
+
+tempe_filter$AlcoholUse_Drv1[tempe_filter$AlcoholUse_Drv1 == ""] <- "NA"
+
+tempe_filter$DrugUse_Drv1[tempe_filter$DrugUse_Drv1 == ""] <- "NA"
+
+tempe_filter$Violation1_Drv1[tempe_filter$Violation1_Drv1 == ""] <- "NA"
+
+na.omit(tempe_filter)
 
 #2012-2019
 count(tempe_filter, Totalfatalities > 0)
