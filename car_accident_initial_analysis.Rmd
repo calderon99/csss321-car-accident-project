@@ -26,7 +26,21 @@ national_data <- read_xlsx("data/nhtsa_yearly_national_stats.xlsx")
 You can also embed plots, for example:
 
 ```{r baton_rouge}
+br_data <- select(baton_rouge_data, CRASH.DATE, OCCURED.ON, FATALITY, INJURY, PRIMARY.FACTOR, PEDESTRIAN) 
+br_data$DATE <- strptime(as.character(br_data$CRASH.DATE), "%m/%d/%Y") 
+br_data$DATE <- format(br_data$DATE, "%Y")
 
+br_data$FATALITY[br_data$FATALITY == ""] <- "0"
+br_data$FATALITY[br_data$FATALITY == "X"] <- "1"
+
+br_data$INJURY[br_data$INJURY == ""] <- "0"
+br_data$INJURY[br_data$INJURY == "X"] <- "1"
+
+br_data$PEDESTRIAN[br_data$PEDESTRIAN == ""] <- "0"
+br_data$PEDESTRIAN[br_data$PEDESTRIAN == "X"] <- "1"
+
+br_fatality <- subset(br_data, subset = (FATALITY == "1"))
+br_no_fatality <- subset(br_data, subset = (FATALITY == "0"))
 ```
 
 ```{r seattle}
