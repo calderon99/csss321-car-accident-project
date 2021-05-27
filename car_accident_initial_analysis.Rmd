@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(dplyr)
 library(readxl)
+library(lubridate)
 ```
 
 
@@ -25,6 +26,12 @@ national_data <- read_xlsx("data/nhtsa_yearly_national_stats.xlsx")
 You can also embed plots, for example:
 
 ```{r baton_rouge}
+seattle_data <- subset(seattle_data, select = -c(X, Y, OBJECTID, INCKEY, COLDETKEY, REPORTNO, STATUS, INTKEY, LOCATION, EXCEPTRSNDESC, PEDCOUNT, PEDCYLCOUNT, ADDRTYPE, EXCEPTRSNCODE, SEGLANEKEY, CROSSWALKKEY, HITPARKEDCAR, ST_COLCODE, ST_COLDESC, SDOTCOLNUM, PEDROWNOTGRNT, INATTENTIONIND, SDOT_COLDESC, SDOT_COLCODE, SEVERITYCODE, SEVERITYDESC, COLLISIONTYPE, INCDATE))
+
+seattle_data$date <- strptime(as.character(seattle_data$INCDTTM), "%m/%d/%Y")
+seattle_data$date <- format(seattle_data$date, "%Y")
+
+seattle_filter <- subset(seattle_data$date, subset = (seattle_data$date >= "2012"))
 
 ```
 
