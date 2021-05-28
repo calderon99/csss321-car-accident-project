@@ -28,24 +28,32 @@ national_data <- read_xlsx("data/nhtsa_yearly_national_stats.xlsx")
 br_data <- select(baton_rouge_data, CRASH.DATE, OCCURED.ON, FATALITY, INJURY, PRIMARY.FACTOR, SECOND.FACTOR, PEDESTRIAN)
 br_dataframe <- sapply(br_data, is.factor)
 br_data[br_dataframe] <- lapply(br_data[br_dataframe], function(FATALITY) as.numeric(as.character(FATALITY)))
+transform(br_data, FATALITY =as.numeric(FATALITY))
 
 br_data$DATE <- strptime(as.character(br_data$CRASH.DATE), "%m/%d/%Y")
 br_data$DATE <- format(br_data$DATE, "%Y")
 
-transform(br_data, FATALITY =as.numeric(FATALITY))
+#transform(br_data, FATALITY =as.numeric(FATALITY))
 
-
+#br_data$FATALITY <- as.numeric(br_data$FATALITY)
 br_data$FATALITY[br_data$FATALITY == ""] <- 0
 br_data$FATALITY[br_data$FATALITY == "X"] <- 1
-as.numeric(br_data$FATALITY)
+br_data$FATALITY <- as.numeric(br_data$FATALITY)
 
+#br_data$INJURY <- as.numeric(br_data$INJURY)
 br_data$INJURY[br_data$INJURY == ""] <- as.numeric(0)
 br_data$INJURY[br_data$INJURY == "X"] <- as.numeric(1)
+br_data$INJURY <- as.numeric(br_data$INJURY)
 
-br_data$PEDESTRIAN[br_data$PEDESTRIAN == ""] <- "0"
-br_data$PEDESTRIAN[br_data$PEDESTRIAN == "X"] <- "1"
+#br_data$PEDESTRIAN <- as.numeric(br_data$PEDESTRIAN)
+br_data$PEDESTRIAN[br_data$PEDESTRIAN == ""] <- as.numeric(0)
+br_data$PEDESTRIAN[br_data$PEDESTRIAN == "X"] <- as.numeric(1)
+br_data$PEDESTRIAN <- as.numeric(br_data$PEDESTRIAN)
 
 br_data$SECOND.FACTOR[br_data$SECOND.FACTOR == ""] <- "NONE"
+
+br_summary <- summary(br_data)
+br_summary
 ```
 
 ```{r br_desc_stats}
