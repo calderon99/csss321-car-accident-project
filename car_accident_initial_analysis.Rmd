@@ -52,8 +52,11 @@ primary_factors_br <- unique(br_data$PRIMARY.FACTOR)
 accident_counts <- br_data %>% group_by("primary_reason" = br_data$PRIMARY.FACTOR) %>% count()
 year_totals <- br_data %>% group_by("year" = br_data$DATE) %>% count()
 
-br_fatality <- subset(br_data, subset = (FATALITY == "1"))
+br_fatality <- subset(br_data, subset = (FATALITY == "1")) %>% filter(br_data, )
+br_fatality <- br_data %>% group_by(DATE) %>% filter(FATALITY == "1") %>% count()
 br_no_fatality <- subset(br_data, subset = (FATALITY == "0"))
+
+fatality_plot <- plot(br_fatality$DATE, br_fatality$n) #finish fatality plot and and no fatality then a join  plot
 
 
 fatality_count_br <- br_fatality %>% group_by(br_fatality$DATE) %>% count()
@@ -67,7 +70,7 @@ br_accident_descrip_stat_by_year <- function(br_data, year){
   
   
   return(accident_counts, year_totals)
-}
+} #finish function to return bar plot of accidents and yearly totals
 
 desc_plot <- ggplot(accident_counts, aes(x=primary_reason, y=n)) +
   geom_bar(stat="identity") 
