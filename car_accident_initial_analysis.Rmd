@@ -69,10 +69,16 @@ seattle_data$UNDERINFL[seattle_data$UNDERINFL == ""] <- "NA"
 seattle_data$WEATHER[seattle_data$WEATHER == ""] <- "NA"
 seattle_data$ROADCOND[seattle_data$ROADCOND == ""] <- "NA"
 seattle_data$LIGHTCOND[seattle_data$LIGHTCOND == ""] <- "NA"
-seattle_data$SPEEDING[seattle_data$SPEEDING == ""] <- "NA"
+seattle_data$SPEEDING[seattle_data$SPEEDING == ""] <- "N"
 
 ##Subset to years in used in analysis
-seattle_filter <- subset(seattle_data$date, subset = (seattle_data$date >= "2012" & seattle_data$date <= "2019"))
+sea_data <- subset(seattle_data, subset = (date >= "2012" & date <= "2019"))
+
+sea_fatality <- subset(sea_data, subset = (FATALITIES >= "1"))
+sea_no_fatality <- subset(sea_data, subset = (FATALITIES = "0"))
+
+
+
 ```
 
 ```{r tempe}
