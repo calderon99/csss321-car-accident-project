@@ -1,6 +1,6 @@
 ---
 title: "car_accident_initial_analysis"
-author: "Alejandro Calderon"
+author: "Alejandro Calderon, Dylan Craker, Trent Douglas"
 date: "5/25/2021"
 output: html_document
 ---
