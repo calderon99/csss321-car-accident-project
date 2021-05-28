@@ -33,19 +33,14 @@ transform(br_data, FATALITY =as.numeric(FATALITY))
 br_data$DATE <- strptime(as.character(br_data$CRASH.DATE), "%m/%d/%Y")
 br_data$DATE <- format(br_data$DATE, "%Y")
 
-#transform(br_data, FATALITY =as.numeric(FATALITY))
-
-#br_data$FATALITY <- as.numeric(br_data$FATALITY)
 br_data$FATALITY[br_data$FATALITY == ""] <- 0
 br_data$FATALITY[br_data$FATALITY == "X"] <- 1
 br_data$FATALITY <- as.numeric(br_data$FATALITY)
 
-#br_data$INJURY <- as.numeric(br_data$INJURY)
 br_data$INJURY[br_data$INJURY == ""] <- as.numeric(0)
 br_data$INJURY[br_data$INJURY == "X"] <- as.numeric(1)
 br_data$INJURY <- as.numeric(br_data$INJURY)
 
-#br_data$PEDESTRIAN <- as.numeric(br_data$PEDESTRIAN)
 br_data$PEDESTRIAN[br_data$PEDESTRIAN == ""] <- as.numeric(0)
 br_data$PEDESTRIAN[br_data$PEDESTRIAN == "X"] <- as.numeric(1)
 br_data$PEDESTRIAN <- as.numeric(br_data$PEDESTRIAN)
@@ -70,21 +65,18 @@ br_no_fatality <- subset(br_data, subset = (FATALITY == 0))
 no_fatality_count <- br_no_fatality %>% group_by(DATE) %>% count()
 no_fatality_count$DATE <- as.numeric(no_fatality_count$DATE)
 
-# fatality_plot <- plot(br_fatality$DATE, br_fatality$n) #finish fatality plot and and no fatality then a join  plot
-
 fatality_plot <- ggplot() +
   geom_point(data = fatality_counts, aes(DATE, n))+
   geom_point(data = no_fatality_count, aes(DATE, n))+
-  xlim(c(2010, 2020)) +
-  scale_y_continuous(trans = 'log2')
+  xlim(c(2010, 2021)) +
+  scale_y_continuous(trans = 'log2') +
+  xlab("Total Number of Fatalities") +
+  ylab("Year")
+print(fatality_plot + ggtitle("Number of Car Accidents in Baton Rouge from 2010-2021"))
 
 
 fatality_count_br <- br_fatality %>% group_by(br_fatality$DATE) %>% count()
 no_fatality_count_br <- br_no_fatality %>% group_by(br_no_fatality$DATE) %>% count()
-
-#years <- c(2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020)
-
-
 
 # frequency_by_year <- function(data, variable_of_interest, time_variable, year){
 #   counts <- table(data %>% group_by("variable_of_interest" = data$variable_of_interest) %>% count())
