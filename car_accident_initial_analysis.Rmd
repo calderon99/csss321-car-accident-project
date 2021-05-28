@@ -12,6 +12,7 @@ library(dplyr)
 library(readxl)
 library(lubridate)
 library(grDevices)
+library(ggplot2)
 ```
 
 
@@ -65,6 +66,9 @@ br_no_fatality <- subset(br_data, subset = (FATALITY == 0))
 no_fatality_count <- br_no_fatality %>% group_by(DATE) %>% count()
 no_fatality_count$DATE <- as.numeric(no_fatality_count$DATE)
 
+fatality_totals <- c(fatality_counts$n, no_fatality_count$n)
+
+
 fatality_plot <- ggplot() +
   geom_point(data = fatality_counts, aes(DATE, n))+
   geom_point(data = no_fatality_count, aes(DATE, n))+
@@ -73,6 +77,7 @@ fatality_plot <- ggplot() +
   xlab("Total Number of Fatalities") +
   ylab("Year")
 print(fatality_plot + ggtitle("Number of Car Accidents in Baton Rouge from 2010-2021"))
+
 
 
 fatality_count_br <- br_fatality %>% group_by(br_fatality$DATE) %>% count()
@@ -86,12 +91,12 @@ no_fatality_count_br <- br_no_fatality %>% group_by(br_no_fatality$DATE) %>% cou
 #   return()
 #} #finish function to return bar plot of accidents and yearly totals
 
-desc_plot <- ggplot(accident_totals, aes(x=n, y=primary_reason)) +
+br_desc_plot <- ggplot(accident_totals, aes(x=n, y=primary_reason)) +
   geom_bar(stat="identity") +
   ylab("Cause of Accident") +
   xlab("Frequency") +
   scale_x_continuous(trans = 'log2')
-print(desc_plot + ggtitle("Cause of Car Accidents in Baton Rouge from 2010-2021"))
+print(br_desc_plot + ggtitle("Cause of Car Accidents in Baton Rouge from 2010-2021"))
 
 summary(accident_totals$n)
 
