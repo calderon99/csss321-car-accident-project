@@ -77,12 +77,25 @@ desc_plot <- ggplot(accident_counts, aes(x=primary_reason, y=n)) +
 ```
 
 ```{r seattle}
-seattle_data <- subset(seattle_data, select = -c(X, Y, OBJECTID, INCKEY, COLDETKEY, REPORTNO, STATUS, INTKEY, LOCATION, EXCEPTRSNDESC, PEDCOUNT, PEDCYLCOUNT, ADDRTYPE, EXCEPTRSNCODE, SEGLANEKEY, CROSSWALKKEY, HITPARKEDCAR, ST_COLCODE, ST_COLDESC, SDOTCOLNUM, PEDROWNOTGRNT, INATTENTIONIND, SDOT_COLDESC, SDOT_COLCODE, SEVERITYCODE, SEVERITYDESC, COLLISIONTYPE, INCDATE))
+##Filter unnecessary columns
+seattle_data <- select(seattle_data, PERSONCOUNT, VEHCOUNT, INJURIES, SERIOUSINJURIES, FATALITIES, INCDTTM, JUNCTIONTYPE, UNDERINFL, WEATHER, ROADCOND, LIGHTCOND, SPEEDING)
 
+##Change date to only year
 seattle_data$date <- strptime(as.character(seattle_data$INCDTTM), "%m/%d/%Y")
 seattle_data$date <- format(seattle_data$date, "%Y")
 
-seattle_filter <- subset(seattle_data$date, subset = (seattle_data$date >= "2012"))
+##Change blanks to NA
+seattle_data$PERSONCOUNT[seattle_data$PERSONCOUNT == "0"] <- "NA"
+seattle_data$VEHCOUNT[seattle_data$VEHCOUNT == "0"] <- "NA"
+seattle_data$JUNCTIONTYPE[seattle_data$JUNCTIONTYPE == ""] <- "NA"
+seattle_data$UNDERINFL[seattle_data$UNDERINFL == ""] <- "NA"
+seattle_data$WEATHER[seattle_data$WEATHER == ""] <- "NA"
+seattle_data$ROADCOND[seattle_data$ROADCOND == ""] <- "NA"
+seattle_data$LIGHTCOND[seattle_data$LIGHTCOND == ""] <- "NA"
+seattle_data$SPEEDING[seattle_data$SPEEDING == ""] <- "NA"
+
+##Subset to years in used in analysis
+seattle_filter <- subset(seattle_data$date, subset = (seattle_data$date >= "2012" & seattle_data$date <= "2019"))
 ```
 
 ```{r tempe}
