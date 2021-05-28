@@ -118,11 +118,30 @@ count(tempe_filter, Totalfatalities > 0)
 
 summary(tempe_filter)
 
-
+#simple barplot
 ggplot(tempe_filter) +
   geom_bar(aes(x = Injuryseverity))
 
+#test dont work
+ggplot(tempe_filter) +
+  geom_bar(aes(x = Injuryseverity, y = n), stat = "Year")
 
+#testing aggregating counts for stacked bar chart
+agg <- count(tempe_filter, AlcoholUse_Drv1, DrugUse_Drv1, Injuryseverity)
+
+
+
+tempe_ord <- mutate(agg,
+                     Injuryseverity = reorder(Injuryseverity, -n, sum),
+                     AlcoholUse_Drv1 = reorder(AlcoholUse_Drv1, -n, sum))
+
+
+
+tempe.p1 <- ggplot(agg) +
+  geom_col(aes(x = Injuryseverity, y = n, fill = AlcoholUse_Drv1))
+
+tempe.p1
+ 
 
 #tempe populations
 tempepop_2012 <- 164139
