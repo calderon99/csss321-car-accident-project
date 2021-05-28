@@ -15,7 +15,7 @@ library(grDevices)
 ```
 
 
-```{r load}
+```{r load, include=FALSE}
 baton_rouge_data <- read.csv("data/Baton_Rouge_Traffic_Incidents.csv")
 seattle_data <- read.csv("data/seattle_Collisions.csv")
 tempe_data <- read.csv("data/tempe_Crash_Data_Report__detail_.csv")
@@ -57,17 +57,26 @@ br_summary
 ```
 
 ```{r br_desc_stats}
-
 primary_factors_br <- unique(br_data$PRIMARY.FACTOR)
 
 accident_totals <- br_data %>% group_by("primary_reason" = br_data$PRIMARY.FACTOR) %>% count()
 year_totals <- br_data %>% group_by("year" = br_data$DATE) %>% count()
 
 br_fatality <- subset(br_data, subset = (FATALITY == "1")) 
-br_fatality <- br_data %>% group_by(DATE) %>% filter(FATALITY == "1") %>% count()
-br_no_fatality <- subset(br_data, subset = (FATALITY == "0"))
+fatality_counts <- br_data %>% group_by(DATE) %>% filter(FATALITY == 1) %>% count()
+fatality_counts$DATE <- as.numeric(fatality_counts$DATE)
 
-fatality_plot <- plot(br_fatality$DATE, br_fatality$n) #finish fatality plot and and no fatality then a join  plot
+br_no_fatality <- subset(br_data, subset = (FATALITY == 0))
+no_fatality_count <- br_no_fatality %>% group_by(DATE) %>% count()
+no_fatality_count$DATE <- as.numeric(no_fatality_count$DATE)
+
+# fatality_plot <- plot(br_fatality$DATE, br_fatality$n) #finish fatality plot and and no fatality then a join  plot
+
+fatality_plot <- ggplot() +
+  geom_point(data = fatality_counts, aes(DATE, n))+
+  geom_point(data = no_fatality_count, aes(DATE, n))+
+  xlim(c(2010, 2020)) +
+  scale_y_continuous(trans = 'log2')
 
 
 fatality_count_br <- br_fatality %>% group_by(br_fatality$DATE) %>% count()
@@ -77,18 +86,22 @@ no_fatality_count_br <- br_no_fatality %>% group_by(br_no_fatality$DATE) %>% cou
 
 
 
-accident_frequency_by_year <- function(data, variable_of_interest, time_variable, year){
-  accident_counts <- table(data %>% group_by("primary_reason" = data$variable_of_interest) %>% count())
-  year_total <- filter()
-  
-  
-  return()
-} #finish function to return bar plot of accidents and yearly totals
+# frequency_by_year <- function(data, variable_of_interest, time_variable, year){
+#   counts <- table(data %>% group_by("variable_of_interest" = data$variable_of_interest) %>% count())
+#   year_total <- filter()
+#   
+#   
+#   return()
+#} #finish function to return bar plot of accidents and yearly totals
 
-desc_plot <- ggplot(accident_counts, aes(x=n, y=primary_reason)) +
-  geom_bar(stat="identity") 
-desc_plot
+desc_plot <- ggplot(accident_totals, aes(x=n, y=primary_reason)) +
+  geom_bar(stat="identity") +
+  ylab("Cause of Accident") +
+  xlab("Frequency") +
+  scale_x_continuous(trans = 'log2')
+print(desc_plot + ggtitle("Cause of Car Accidents in Baton Rouge from 2010-2021"))
 
+summary(accident_totals$n)
 
 ```
 
