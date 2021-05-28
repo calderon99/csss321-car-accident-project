@@ -123,11 +123,12 @@ seattle_data$SPEEDING[seattle_data$SPEEDING == ""] <- "N"
 ##Subset to years in used in analysis
 sea_data <- subset(seattle_data, subset = (date >= "2012" & date <= "2019"))
 
+sea_data <- na.omit(sea_data)
 sea_fatality <- subset(sea_data, subset = (FATALITIES >= "1"))
-sea_no_fatality <- subset(sea_data, subset = (FATALITIES = "0"))
+sea_no_fatality <- subset(sea_data, subset = (FATALITIES == "0"))
 
-
-
+sea_data_summary <- summary(sea_data)
+sea_data_summary
 ```
 
 ```{r tempe}
