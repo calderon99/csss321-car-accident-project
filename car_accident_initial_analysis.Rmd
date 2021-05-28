@@ -1,6 +1,6 @@
 ---
 title: "car_accident_initial_analysis"
-author: "Alejandro Calderon"
+author: "Alejandro Calderon, Dylan Craker, Trent Douglas"
 date: "5/25/2021"
 output: html_document
 ---
@@ -12,10 +12,11 @@ library(dplyr)
 library(readxl)
 library(lubridate)
 library(grDevices)
+library(ggplot2)
 ```
 
 
-```{r load}
+```{r load, include=FALSE}
 baton_rouge_data <- read.csv("data/Baton_Rouge_Traffic_Incidents.csv")
 seattle_data <- read.csv("data/seattle_Collisions.csv")
 tempe_data <- read.csv("data/tempe_Crash_Data_Report__detail_.csv")
@@ -23,61 +24,83 @@ national_data <- read_xlsx("data/nhtsa_yearly_national_stats.xlsx")
 ```
 
 ## Filtering datasets
-
-```{r baton_rouge}
+```{r baton_rouge_maniputalion, include=FALSE}
 br_data <- select(baton_rouge_data, CRASH.DATE, OCCURED.ON, FATALITY, INJURY, PRIMARY.FACTOR, SECOND.FACTOR, PEDESTRIAN)
 br_dataframe <- sapply(br_data, is.factor)
 br_data[br_dataframe] <- lapply(br_data[br_dataframe], function(FATALITY) as.numeric(as.character(FATALITY)))
+transform(br_data, FATALITY =as.numeric(FATALITY))
 
 br_data$DATE <- strptime(as.character(br_data$CRASH.DATE), "%m/%d/%Y")
 br_data$DATE <- format(br_data$DATE, "%Y")
+br_data <- select(br_data, OCCURED.ON, FATALITY, INJURY, PRIMARY.FACTOR, SECOND.FACTOR, PEDESTRIAN, DATE)
+```
 
-transform(br_data, FATALITY =as.numeric(FATALITY))
-
-
+```{r baton_rouge_data_cleaning}
 br_data$FATALITY[br_data$FATALITY == ""] <- 0
 br_data$FATALITY[br_data$FATALITY == "X"] <- 1
-as.numeric(br_data$FATALITY)
+br_data$FATALITY <- as.numeric(br_data$FATALITY)
 
 br_data$INJURY[br_data$INJURY == ""] <- as.numeric(0)
 br_data$INJURY[br_data$INJURY == "X"] <- as.numeric(1)
+br_data$INJURY <- as.numeric(br_data$INJURY)
 
-br_data$PEDESTRIAN[br_data$PEDESTRIAN == ""] <- "0"
-br_data$PEDESTRIAN[br_data$PEDESTRIAN == "X"] <- "1"
+br_data$PEDESTRIAN[br_data$PEDESTRIAN == ""] <- as.numeric(0)
+br_data$PEDESTRIAN[br_data$PEDESTRIAN == "X"] <- as.numeric(1)
+br_data$PEDESTRIAN <- as.numeric(br_data$PEDESTRIAN)
 
 br_data$SECOND.FACTOR[br_data$SECOND.FACTOR == ""] <- "NONE"
 
+br_summary <- summary(br_data)
+br_summary
+```
+
+```{r br_desc_stats}
 primary_factors_br <- unique(br_data$PRIMARY.FACTOR)
 
-accident_counts <- br_data %>% group_by("primary_reason" = br_data$PRIMARY.FACTOR) %>% count()
+accident_totals <- br_data %>% group_by("primary_reason" = br_data$PRIMARY.FACTOR) %>% count()
 year_totals <- br_data %>% group_by("year" = br_data$DATE) %>% count()
 
-br_fatality <- subset(br_data, subset = (FATALITY == "1")) %>% filter(br_data, )
-br_fatality <- br_data %>% group_by(DATE) %>% filter(FATALITY == "1") %>% count()
-br_no_fatality <- subset(br_data, subset = (FATALITY == "0"))
+br_fatality <- subset(br_data, subset = (FATALITY == "1")) 
+fatality_counts <- br_data %>% group_by(DATE) %>% filter(FATALITY == 1) %>% count()
+fatality_counts$DATE <- as.numeric(fatality_counts$DATE)
 
-fatality_plot <- plot(br_fatality$DATE, br_fatality$n) #finish fatality plot and and no fatality then a join  plot
+br_no_fatality <- subset(br_data, subset = (FATALITY == 0))
+no_fatality_count <- br_no_fatality %>% group_by(DATE) %>% count()
+no_fatality_count$DATE <- as.numeric(no_fatality_count$DATE)
 
+fatality_totals <- c(fatality_counts$n, no_fatality_count$n)
+
+fatality_plot <- ggplot() +
+  geom_point(data = fatality_counts, aes(DATE, n))+
+  geom_point(data = no_fatality_count, aes(DATE, n))+
+  xlim(c(2010, 2021)) +
+  scale_y_continuous(trans = 'log2') +
+  xlab("Total Number of Fatalities") +
+  ylab("Year")
+print(fatality_plot + ggtitle("Number of Car Accidents in Baton Rouge from 2010-2021"))
 
 fatality_count_br <- br_fatality %>% group_by(br_fatality$DATE) %>% count()
 no_fatality_count_br <- br_no_fatality %>% group_by(br_no_fatality$DATE) %>% count()
 
-years <- c(2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020)
+br_desc_plot <- ggplot(accident_totals, aes(x=n, y=primary_reason)) +
+  geom_bar(stat="identity") +
+  ylab("Cause of Accident") +
+  xlab("Frequency") +
+  scale_x_continuous(trans = 'log2')
+print(br_desc_plot + ggtitle("Cause of Car Accidents in Baton Rouge from 2010-2021"))
 
-br_accident_descrip_stat_by_year <- function(br_data, year){
-  accident_counts <- br_data %>% group_by("primary_reason" = br_data$PRIMARY.FACTOR) %>% count()
-  year_totals <- br_data %>% group_by("year" = br_data$DATE) %>% count()
-  
-  
-  return(accident_counts, year_totals)
-} #finish function to return bar plot of accidents and yearly totals
-
-desc_plot <- ggplot(accident_counts, aes(x=primary_reason, y=n)) +
-  geom_bar(stat="identity") 
-  
-
-
+summary(accident_totals$n)
 ```
+```{r br_function_extra, include=FALSE}
+# frequency_by_year <- function(data, variable_of_interest, time_variable, year){
+#   counts <- table(data %>% group_by("variable_of_interest" = data$variable_of_interest) %>% count())
+#   year_total <- filter()
+#   
+#   
+#   return()
+#} #finish function to return bar plot of accidents and yearly totals
+```
+
 
 ```{r seattle}
 ##Filter unnecessary columns
@@ -95,10 +118,17 @@ seattle_data$UNDERINFL[seattle_data$UNDERINFL == ""] <- "NA"
 seattle_data$WEATHER[seattle_data$WEATHER == ""] <- "NA"
 seattle_data$ROADCOND[seattle_data$ROADCOND == ""] <- "NA"
 seattle_data$LIGHTCOND[seattle_data$LIGHTCOND == ""] <- "NA"
-seattle_data$SPEEDING[seattle_data$SPEEDING == ""] <- "NA"
+seattle_data$SPEEDING[seattle_data$SPEEDING == ""] <- "N"
 
 ##Subset to years in used in analysis
-seattle_filter <- subset(seattle_data$date, subset = (seattle_data$date >= "2012" & seattle_data$date <= "2019"))
+sea_data <- subset(seattle_data, subset = (date >= "2012" & date <= "2019"))
+
+sea_data <- na.omit(sea_data)
+sea_fatality <- subset(sea_data, subset = (FATALITIES >= "1"))
+sea_no_fatality <- subset(sea_data, subset = (FATALITIES == "0"))
+
+sea_data_summary <- summary(sea_data)
+sea_data_summary
 ```
 
 ```{r tempe}
