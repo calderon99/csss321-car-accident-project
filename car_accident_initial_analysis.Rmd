@@ -24,7 +24,7 @@ national_data <- read_xlsx("data/nhtsa_yearly_national_stats.xlsx")
 
 ## Filtering datasets
 
-```{r baton_rouge}
+```{r baton_rouge_data_cleaning}
 br_data <- select(baton_rouge_data, CRASH.DATE, OCCURED.ON, FATALITY, INJURY, PRIMARY.FACTOR, SECOND.FACTOR, PEDESTRIAN)
 br_dataframe <- sapply(br_data, is.factor)
 br_data[br_dataframe] <- lapply(br_data[br_dataframe], function(FATALITY) as.numeric(as.character(FATALITY)))
@@ -46,13 +46,16 @@ br_data$PEDESTRIAN[br_data$PEDESTRIAN == ""] <- "0"
 br_data$PEDESTRIAN[br_data$PEDESTRIAN == "X"] <- "1"
 
 br_data$SECOND.FACTOR[br_data$SECOND.FACTOR == ""] <- "NONE"
+```
+
+```{r br_desc_stats}
 
 primary_factors_br <- unique(br_data$PRIMARY.FACTOR)
 
-accident_counts <- br_data %>% group_by("primary_reason" = br_data$PRIMARY.FACTOR) %>% count()
+accident_totals <- br_data %>% group_by("primary_reason" = br_data$PRIMARY.FACTOR) %>% count()
 year_totals <- br_data %>% group_by("year" = br_data$DATE) %>% count()
 
-br_fatality <- subset(br_data, subset = (FATALITY == "1")) %>% filter(br_data, )
+br_fatality <- subset(br_data, subset = (FATALITY == "1")) 
 br_fatality <- br_data %>% group_by(DATE) %>% filter(FATALITY == "1") %>% count()
 br_no_fatality <- subset(br_data, subset = (FATALITY == "0"))
 
@@ -62,19 +65,21 @@ fatality_plot <- plot(br_fatality$DATE, br_fatality$n) #finish fatality plot and
 fatality_count_br <- br_fatality %>% group_by(br_fatality$DATE) %>% count()
 no_fatality_count_br <- br_no_fatality %>% group_by(br_no_fatality$DATE) %>% count()
 
-years <- c(2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020)
+#years <- c(2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020)
 
-br_accident_descrip_stat_by_year <- function(br_data, year){
-  accident_counts <- br_data %>% group_by("primary_reason" = br_data$PRIMARY.FACTOR) %>% count()
-  year_totals <- br_data %>% group_by("year" = br_data$DATE) %>% count()
+
+
+accident_frequency_by_year <- function(data, variable_of_interest, time_variable, year){
+  accident_counts <- table(data %>% group_by("primary_reason" = data$variable_of_interest) %>% count())
+  year_total <- filter()
   
   
-  return(accident_counts, year_totals)
+  return()
 } #finish function to return bar plot of accidents and yearly totals
 
-desc_plot <- ggplot(accident_counts, aes(x=primary_reason, y=n)) +
+desc_plot <- ggplot(accident_counts, aes(x=n, y=primary_reason)) +
   geom_bar(stat="identity") 
-  
+desc_plot
 
 
 ```
