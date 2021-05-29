@@ -25,14 +25,14 @@ national_data <- read_xlsx("data/nhtsa_yearly_national_stats.xlsx")
 
 ## Filtering datasets
 ```{r baton_rouge_maniputalion, include=FALSE}
-br_data <- select(baton_rouge_data, CRASH.DATE, OCCURED.ON, FATALITY, INJURY, PRIMARY.FACTOR, SECOND.FACTOR, PEDESTRIAN)
-br_dataframe <- sapply(br_data, is.factor)
-br_data[br_dataframe] <- lapply(br_data[br_dataframe], function(FATALITY) as.numeric(as.character(FATALITY)))
-transform(br_data, FATALITY =as.numeric(FATALITY))
+baton_rouge <- select(baton_rouge_data, CRASH.DATE, OCCURED.ON, FATALITY, INJURY, PRIMARY.FACTOR, SECOND.FACTOR, PEDESTRIAN)
+br_dataframe <- sapply(baton_rouge, is.factor)
+baton_rouge[br_dataframe] <- lapply(baton_rouge[br_dataframe], function(FATALITY) as.numeric(as.character(FATALITY)))
+transform(baton_rouge, FATALITY =as.numeric(FATALITY))
 
-br_data$DATE <- strptime(as.character(br_data$CRASH.DATE), "%m/%d/%Y")
-br_data$DATE <- format(br_data$DATE, "%Y")
-br_data <- select(br_data, OCCURED.ON, FATALITY, INJURY, PRIMARY.FACTOR, SECOND.FACTOR, PEDESTRIAN, DATE)
+baton_rouge$DATE <- strptime(as.character(baton_rouge$CRASH.DATE), "%m/%d/%Y")
+baton_rouge$DATE <- format(baton_rouge$DATE, "%Y")
+br_data <- select(baton_rouge, OCCURED.ON, FATALITY, INJURY, PRIMARY.FACTOR, SECOND.FACTOR, PEDESTRIAN, DATE)
 ```
 
 ```{r baton_rouge_data_cleaning}
@@ -75,9 +75,11 @@ fatality_plot <- ggplot() +
   geom_point(data = no_fatality_count, aes(DATE, n))+
   xlim(c(2010, 2021)) +
   scale_y_continuous(trans = 'log2') +
-  xlab("Total Number of Fatalities") +
-  ylab("Year")
+  ylab("Total Number of Fatalities") +
+  xlab("Year")
 print(fatality_plot + ggtitle("Number of Car Accidents in Baton Rouge from 2010-2021"))
+
+lm_fatality <- lm(br)
 
 fatality_count_br <- br_fatality %>% group_by(br_fatality$DATE) %>% count()
 no_fatality_count_br <- br_no_fatality %>% group_by(br_no_fatality$DATE) %>% count()
@@ -91,6 +93,7 @@ print(br_desc_plot + ggtitle("Cause of Car Accidents in Baton Rouge from 2010-20
 
 summary(accident_totals$n)
 ```
+
 ```{r br_function_extra, include=FALSE}
 # frequency_by_year <- function(data, variable_of_interest, time_variable, year){
 #   counts <- table(data %>% group_by("variable_of_interest" = data$variable_of_interest) %>% count())
