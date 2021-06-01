@@ -133,49 +133,57 @@ sea_data_summary <- summary(sea_data)
 sea_data_summary
 ```
 
-```{r tempe}
+```{r tempe data manipulation}
 #initial filter of columns
 tempe_filter <- tempe_data %>%
   select(Year, Totalinjuries, Totalfatalities, Injuryseverity, AlcoholUse_Drv1,
          DrugUse_Drv1, Unitaction_One, Violation1_Drv1, StreetName, CrossStreet, Lightcondition,
          JunctionRelation,Weather, SurfaceCondition) 
 
+#filters out blank rows
 tempe_filter <- tempe_filter[!(tempe_filter$AlcoholUse_Drv1 == ""), ]
+```
 
-
-
+```{r tempe summary}
 #2012-2019
 count(tempe_filter, Totalfatalities > 0)
 # only 87 accidents with fatalities
 
 summary(tempe_filter)
+```
 
+```{r tempe injury plot}
 #simple barplot
 ggplot(tempe_filter) +
-  geom_bar(aes(x = Injuryseverity))
-
+  geom_bar(aes(x = Injuryseverity)) +
+  theme(axis.text.x = element_text(size = 6))
+```
+```{r tempe stacked bar plot}
 #test dont work
 #(tempe_filter) +
  # geom_bar(aes(x = Injuryseverity, y = n), stat = "Year")
 
 #testing aggregating counts for stacked bar chart
-agg <- count(tempe_filter, AlcoholUse_Drv1, DrugUse_Drv1, Injuryseverity)
+tempe_aggregate <- count(tempe_filter, Year, Totalinjuries, AlcoholUse_Drv1)
 
 
 
-tempe_ord <- mutate(agg,
-                     Injuryseverity = reorder(Injuryseverity, -n, sum),
+tempe_ord <- mutate(tempe_aggregate,
+                     Totalinjuries = reorder(Totalinjuries, -n, sum),
                      AlcoholUse_Drv1 = reorder(AlcoholUse_Drv1, -n, sum))
 
 
+#stacked bar plot showing number of injuries in accordance to alcohol influence
+tempe_alcinf <- ggplot(tempe_aggregate) +
+  geom_col(aes(x = AlcoholUse_Drv1, y = n, fill = Totalinjuries))
 
-tempe.p1 <- ggplot(agg) +
-  geom_col(aes(x = Injuryseverity, y = n, fill = AlcoholUse_Drv1))
-
-tempe.p1
+#makes multiple charts for each year
+tempe_alcinf + facet_wrap(~ Year)
  
+#need to find proportions instead of counts to account for the much higher number
+#of occurances for non-influence driving
 
-#tempe populations
+#tempe populations for future reference
 tempepop_2012 <- 164139
 tempepop_2013 <- 164742
 tempepop_2014 <- 166975
