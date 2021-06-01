@@ -79,7 +79,6 @@ fatality_plot <- ggplot() +
   xlab("Year")
 print(fatality_plot + ggtitle("Number of Car Accidents in Baton Rouge from 2010-2021"))
 
-lm_fatality <- lm(br)
 
 fatality_count_br <- br_fatality %>% group_by(br_fatality$DATE) %>% count()
 no_fatality_count_br <- br_no_fatality %>% group_by(br_no_fatality$DATE) %>% count()
@@ -156,8 +155,8 @@ ggplot(tempe_filter) +
   geom_bar(aes(x = Injuryseverity))
 
 #test dont work
-ggplot(tempe_filter) +
-  geom_bar(aes(x = Injuryseverity, y = n), stat = "Year")
+#(tempe_filter) +
+ # geom_bar(aes(x = Injuryseverity, y = n), stat = "Year")
 
 #testing aggregating counts for stacked bar chart
 agg <- count(tempe_filter, AlcoholUse_Drv1, DrugUse_Drv1, Injuryseverity)
