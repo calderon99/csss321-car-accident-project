@@ -58,8 +58,8 @@ br_summary
 ```{r br_desc_stats}
 primary_factors_br <- unique(br_data$PRIMARY.FACTOR)
 
-accident_totals <- br_data %>% group_by("primary_reason" = br_data$PRIMARY.FACTOR) %>% count()
-year_totals <- br_data %>% group_by("year" = br_data$year) %>% count()
+accident_totals <- br_data %>% group_by("primary_reason" = br_data$PRIMARY.FACTOR) %>% count(name = "total_obs")
+year_totals <- br_data %>% group_by("year" = br_data$year) %>% count(name = "year_totals")
 
 br_fatality <- subset(br_data, subset = (FATALITY == "1")) 
 fatality_counts <- br_data %>% group_by(year) %>% filter(FATALITY == 1) %>% count(name = "fatality_counts")
@@ -69,11 +69,10 @@ br_no_fatality <- subset(br_data, subset = (FATALITY == 0))
 no_fatality_count <- br_no_fatality %>% group_by(year) %>% count(name = "no_fatality_counts") %>% filter(year < 2021)
 no_fatality_count$year <- as.numeric(no_fatality_count$year)
 
-fatality_totals <- c(fatality_counts$n, no_fatality_count$n)
 
 fatality_plot <- ggplot() +
-  geom_point(data = fatality_counts, aes(year, n), colour = "red")+
-  geom_point(data = no_fatality_count, aes(year, n), colour = "blue")+
+  geom_point(data = fatality_counts, aes(year, fatality_counts), colour = "red")+
+  geom_point(data = no_fatality_count, aes(year, no_fatality_counts), colour = "blue")+
   xlim(c(2010, 2020)) +
   scale_y_continuous(trans = 'log2') +
   ylab("Total Number of Fatalities") +
@@ -84,14 +83,14 @@ print(fatality_plot + ggtitle("Number of Car Accidents in Baton Rouge from 2010-
 fatality_count_br <- br_fatality %>% group_by(br_fatality$year) %>% count()
 no_fatality_count_br <- br_no_fatality %>% group_by(br_no_fatality$year) %>% count()
 
-br_desc_plot <- ggplot(accident_totals, aes(x=n, y=primary_reason)) +
+br_desc_plot <- ggplot(accident_totals, aes(x=total_obs, y=primary_reason)) +
   geom_bar(stat="identity") +
   ylab("Cause of Accident") +
   xlab("Frequency") +
   scale_x_continuous(trans = 'log2')
 print(br_desc_plot + ggtitle("Cause of Car Accidents in Baton Rouge from 2010-2021"))
 
-summary(accident_totals$n)
+summary(accident_totals$total_obs)
 ```
 
 ```{r br_population}
@@ -99,6 +98,7 @@ br_pop <- baton_rouge_population %>% filter(`Geographic Area` == "Baton Rouge ci
 br_pop_rotated <- br_pop %>% pivot_longer(br_pop, cols = starts_with("20"), names_to = "year", values_to = "pop")
 baton_rouge_fat_no_fat <- merge(fatality_counts, no_fatality_count, by = "year")
 baton_rouge_totals <- merge(baton_rouge_fat_no_fat, br_pop_rotated, by = "year")
+
 ```
 
 ```{r br_function_extra, include=FALSE}
