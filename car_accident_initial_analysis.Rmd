@@ -18,6 +18,7 @@ library(ggplot2)
 
 ```{r load, include=FALSE}
 baton_rouge_data <- read.csv("data/Baton_Rouge_Traffic_Incidents.csv")
+baton_rouge_population <- read_xlsx("data/baton_rouge_pop.xlsx")
 seattle_data <- read.csv("data/seattle_Collisions.csv")
 tempe_data <- read.csv("data/tempe_Crash_Data_Report__detail_.csv")
 national_data <- read_xlsx("data/nhtsa_yearly_national_stats.xlsx")
@@ -71,9 +72,9 @@ no_fatality_count$DATE <- as.numeric(no_fatality_count$DATE)
 fatality_totals <- c(fatality_counts$n, no_fatality_count$n)
 
 fatality_plot <- ggplot() +
-  geom_point(data = fatality_counts, aes(DATE, n))+
-  geom_point(data = no_fatality_count, aes(DATE, n))+
-  xlim(c(2010, 2021)) +
+  geom_point(data = fatality_counts, aes(DATE, n), colour = "red")+
+  geom_point(data = no_fatality_count, aes(DATE, n), colour = "blue")+
+  xlim(c(2010, 2020)) +
   scale_y_continuous(trans = 'log2') +
   ylab("Total Number of Fatalities") +
   xlab("Year")
