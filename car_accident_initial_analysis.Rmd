@@ -31,9 +31,9 @@ br_dataframe <- sapply(baton_rouge, is.factor)
 baton_rouge[br_dataframe] <- lapply(baton_rouge[br_dataframe], function(FATALITY) as.numeric(as.character(FATALITY)))
 transform(baton_rouge, FATALITY =as.numeric(FATALITY))
 
-baton_rouge$DATE <- strptime(as.character(baton_rouge$CRASH.DATE), "%m/%d/%Y")
-baton_rouge$DATE <- format(baton_rouge$DATE, "%Y")
-br_data <- select(baton_rouge, OCCURED.ON, FATALITY, INJURY, PRIMARY.FACTOR, SECOND.FACTOR, PEDESTRIAN, DATE)
+baton_rouge$year <- strptime(as.character(baton_rouge$CRASH.DATE), "%m/%d/%Y")
+baton_rouge$year <- format(baton_rouge$year, "%Y")
+br_data <- select(baton_rouge, OCCURED.ON, FATALITY, INJURY, PRIMARY.FACTOR, SECOND.FACTOR, PEDESTRIAN, year)
 ```
 
 ```{r baton_rouge_data_cleaning}
@@ -59,21 +59,21 @@ br_summary
 primary_factors_br <- unique(br_data$PRIMARY.FACTOR)
 
 accident_totals <- br_data %>% group_by("primary_reason" = br_data$PRIMARY.FACTOR) %>% count()
-year_totals <- br_data %>% group_by("year" = br_data$DATE) %>% count()
+year_totals <- br_data %>% group_by("year" = br_data$year) %>% count()
 
 br_fatality <- subset(br_data, subset = (FATALITY == "1")) 
-fatality_counts <- br_data %>% group_by(DATE) %>% filter(FATALITY == 1) %>% count()
-fatality_counts$DATE <- as.numeric(fatality_counts$DATE)
+fatality_counts <- br_data %>% group_by(year) %>% filter(FATALITY == 1) %>% count(name = "fatality_counts")
+fatality_counts$year <- as.numeric(fatality_counts$year)
 
 br_no_fatality <- subset(br_data, subset = (FATALITY == 0))
-no_fatality_count <- br_no_fatality %>% group_by(DATE) %>% count()
-no_fatality_count$DATE <- as.numeric(no_fatality_count$DATE)
+no_fatality_count <- br_no_fatality %>% group_by(year) %>% count(name = "no_fatality_counts") %>% filter(year < 2021)
+no_fatality_count$year <- as.numeric(no_fatality_count$year)
 
 fatality_totals <- c(fatality_counts$n, no_fatality_count$n)
 
 fatality_plot <- ggplot() +
-  geom_point(data = fatality_counts, aes(DATE, n), colour = "red")+
-  geom_point(data = no_fatality_count, aes(DATE, n), colour = "blue")+
+  geom_point(data = fatality_counts, aes(year, n), colour = "red")+
+  geom_point(data = no_fatality_count, aes(year, n), colour = "blue")+
   xlim(c(2010, 2020)) +
   scale_y_continuous(trans = 'log2') +
   ylab("Total Number of Fatalities") +
@@ -81,8 +81,8 @@ fatality_plot <- ggplot() +
 print(fatality_plot + ggtitle("Number of Car Accidents in Baton Rouge from 2010-2021"))
 
 
-fatality_count_br <- br_fatality %>% group_by(br_fatality$DATE) %>% count()
-no_fatality_count_br <- br_no_fatality %>% group_by(br_no_fatality$DATE) %>% count()
+fatality_count_br <- br_fatality %>% group_by(br_fatality$year) %>% count()
+no_fatality_count_br <- br_no_fatality %>% group_by(br_no_fatality$year) %>% count()
 
 br_desc_plot <- ggplot(accident_totals, aes(x=n, y=primary_reason)) +
   geom_bar(stat="identity") +
@@ -92,6 +92,13 @@ br_desc_plot <- ggplot(accident_totals, aes(x=n, y=primary_reason)) +
 print(br_desc_plot + ggtitle("Cause of Car Accidents in Baton Rouge from 2010-2021"))
 
 summary(accident_totals$n)
+```
+
+```{r br_population}
+br_pop <- baton_rouge_population %>% filter(`Geographic Area` == "Baton Rouge city, Louisiana") %>% select("2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019")
+br_pop_rotated <- br_pop %>% pivot_longer(br_pop, cols = starts_with("20"), names_to = "year", values_to = "pop")
+baton_rouge_fat_no_fat <- merge(fatality_counts, no_fatality_count, by = "year")
+baton_rouge_totals <- merge(baton_rouge_fat_no_fat, br_pop_rotated, by = "year")
 ```
 
 ```{r br_function_extra, include=FALSE}
