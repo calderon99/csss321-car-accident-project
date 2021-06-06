@@ -103,7 +103,7 @@ baton_rouge_totals <- merge(baton_rouge_fat_no_fat, br_pop_rotated, by = "year")
 baton_rouge_regression <- summary(lm(fatality_counts ~ pop, data = baton_rouge_totals))
 baton_rouge_regression
 ```
-R squared is too small to be described as accurately predicting the data. The p-value is too large to describe the correlation between car accident fatality and population changes from 2010-2019.
+R squared is too small to be described as accurately predicting the data. The p-value is too large to describe the correlation between car accident fatality and population changes from 2010-2019, from the size of the p-value, we fail to reject the null hypothesis.
 ```{r br_function_extra, include=FALSE}
 # frequency_by_year <- function(data, variable_of_interest, time_variable, year){
 #   counts <- table(data %>% group_by("variable_of_interest" = data$variable_of_interest) %>% count())
