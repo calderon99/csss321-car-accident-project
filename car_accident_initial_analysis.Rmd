@@ -98,7 +98,6 @@ br_pop <- baton_rouge_population %>% filter(`Geographic Area` == "Baton Rouge ci
 br_pop_rotated <- br_pop %>% pivot_longer(br_pop, cols = starts_with("20"), names_to = "year", values_to = "pop")
 baton_rouge_fat_no_fat <- merge(fatality_counts, no_fatality_count, by = "year")
 baton_rouge_totals <- merge(baton_rouge_fat_no_fat, br_pop_rotated, by = "year")
-
 ```
 
 ```{r br_function_extra, include=FALSE}
