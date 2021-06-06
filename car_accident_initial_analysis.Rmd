@@ -61,12 +61,12 @@ primary_factors_br <- unique(br_data$PRIMARY.FACTOR)
 accident_totals <- br_data %>% group_by("primary_reason" = br_data$PRIMARY.FACTOR) %>% count(name = "total_obs")
 year_totals <- br_data %>% group_by("year" = br_data$year) %>% count(name = "year_totals")
 
-br_fatality <- subset(br_data, subset = (FATALITY == "1")) 
+br_fatality <- subset(br_data, subset = (FATALITY == 1)) 
 fatality_counts <- br_data %>% group_by(year) %>% filter(FATALITY == 1) %>% count(name = "fatality_counts")
 fatality_counts$year <- as.numeric(fatality_counts$year)
 
 br_no_fatality <- subset(br_data, subset = (FATALITY == 0))
-no_fatality_count <- br_no_fatality %>% group_by(year) %>% count(name = "no_fatality_counts") %>% filter(year < 2021)
+no_fatality_count <- br_no_fatality %>% group_by(year) %>% filter(FATALITY == 0) %>% count(name = "no_fatality_counts") %>% filter(year < 2021)
 no_fatality_count$year <- as.numeric(no_fatality_count$year)
 
 
@@ -99,7 +99,11 @@ br_pop_rotated <- br_pop %>% pivot_longer(br_pop, cols = starts_with("20"), name
 baton_rouge_fat_no_fat <- merge(fatality_counts, no_fatality_count, by = "year")
 baton_rouge_totals <- merge(baton_rouge_fat_no_fat, br_pop_rotated, by = "year")
 ```
-
+```{r br_regression}
+baton_rouge_regression <- summary(lm(fatality_counts ~ pop, data = baton_rouge_totals))
+baton_rouge_regression
+```
+R squared is too small to be described as accurately predicting the data. The p-value is too large to describe the correlation between car accident fatality and population changes from 2010-2019.
 ```{r br_function_extra, include=FALSE}
 # frequency_by_year <- function(data, variable_of_interest, time_variable, year){
 #   counts <- table(data %>% group_by("variable_of_interest" = data$variable_of_interest) %>% count())
