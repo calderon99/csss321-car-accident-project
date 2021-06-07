@@ -111,10 +111,12 @@ br_pop <- baton_rouge_population %>% filter(`Geographic Area` == "Baton Rouge ci
 br_pop_rotated <- br_pop %>% pivot_longer(br_pop, cols = starts_with("20"), names_to = "year", values_to = "pop")
 baton_rouge_fat_no_fat <- merge(fatality_counts, no_fatality_count, by = "year")
 baton_rouge_totals <- merge(baton_rouge_fat_no_fat, br_pop_rotated, by = "year")
-#size_of_baton_rouge <- c(77.1)
+br_area <- 88.65
+baton_rouge_totals$pop_density <- (baton_rouge_totals$pop/br_area)
+
 ```
 ```{r br_regression}
-baton_rouge_regression <- summary(lm(fatality_counts ~ pop, data = baton_rouge_totals))
+baton_rouge_regression <- summary(lm(fatality_counts ~ pop_density + year, data = baton_rouge_totals))
 baton_rouge_regression
 ```
 R squared is too small to be described as accurately predicting the data. The p-value is too large to describe the correlation between car accident fatality and population changes from 2010-2019, from the size of the p-value, we fail to reject the null hypothesis.
