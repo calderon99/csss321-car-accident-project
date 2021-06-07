@@ -33,6 +33,7 @@ transform(baton_rouge, FATALITY =as.numeric(FATALITY))
 baton_rouge$year <- strptime(as.character(baton_rouge$CRASH.DATE), "%m/%d/%Y")
 baton_rouge$year <- format(baton_rouge$year, "%Y")
 br_data <- select(baton_rouge, OCCURED.ON, FATALITY, INJURY, PRIMARY.FACTOR, SECOND.FACTOR, PEDESTRIAN, year)
+
 ```
 
 ```{r baton_rouge_data_cleaning, include=FALSE}
