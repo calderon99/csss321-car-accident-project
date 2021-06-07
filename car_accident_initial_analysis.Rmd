@@ -1,15 +1,12 @@
 ---
 title: "Car Accidents and Population Growth in Baton Rouge, LA, Tempe, AZ, and Seattle, WA"
 author: "Alejandro Calderon, Dylan Craker, Trent Douglas"
-<<<<<<< HEAD
 date: "5/25/2021"
 output:
-  html_document: default
   pdf_document: default
-=======
+  html_document: default
 date: "6/06/2021"
 output: html_document
->>>>>>> b1f06cffac226badfc94b8a6c00e6607c3e129e6
 ---
 
 ```{r setup, include=FALSE}
