@@ -1,10 +1,15 @@
 ---
-title: "car_accident_initial_analysis"
+title: "Car Accidents and Population Growth in Baton Rouge, LA, Tempe, AZ, and Seattle, WA"
 author: "Alejandro Calderon, Dylan Craker, Trent Douglas"
+<<<<<<< HEAD
 date: "5/25/2021"
 output:
   html_document: default
   pdf_document: default
+=======
+date: "6/06/2021"
+output: html_document
+>>>>>>> b1f06cffac226badfc94b8a6c00e6607c3e129e6
 ---
 
 ```{r setup, include=FALSE}
@@ -17,27 +22,27 @@ library(grDevices)
 library(ggplot2)
 ```
 
-
 ```{r load, include=FALSE}
 baton_rouge_data <- read.csv("data/Baton_Rouge_Traffic_Incidents.csv")
+baton_rouge_population <- read_xlsx("data/baton_rouge_pop.xlsx")
 seattle_data <- read.csv("data/seattle_Collisions.csv")
 tempe_data <- read.csv("data/tempe_Crash_Data_Report__detail_.csv")
 national_data <- read_xlsx("data/nhtsa_yearly_national_stats.xlsx")
 ```
 
-## Filtering datasets
+## Baton Rouge Data
 ```{r baton_rouge_maniputalion, include=FALSE}
-br_data <- select(baton_rouge_data, CRASH.DATE, OCCURED.ON, FATALITY, INJURY, PRIMARY.FACTOR, SECOND.FACTOR, PEDESTRIAN)
-br_dataframe <- sapply(br_data, is.factor)
-br_data[br_dataframe] <- lapply(br_data[br_dataframe], function(FATALITY) as.numeric(as.character(FATALITY)))
-transform(br_data, FATALITY =as.numeric(FATALITY))
+baton_rouge <- select(baton_rouge_data, CRASH.DATE, OCCURED.ON, FATALITY, INJURY, PRIMARY.FACTOR, SECOND.FACTOR, PEDESTRIAN)
+br_dataframe <- sapply(baton_rouge, is.factor)
+baton_rouge[br_dataframe] <- lapply(baton_rouge[br_dataframe], function(FATALITY) as.numeric(as.character(FATALITY)))
+transform(baton_rouge, FATALITY =as.numeric(FATALITY))
 
-br_data$DATE <- strptime(as.character(br_data$CRASH.DATE), "%m/%d/%Y")
-br_data$DATE <- format(br_data$DATE, "%Y")
-br_data <- select(br_data, OCCURED.ON, FATALITY, INJURY, PRIMARY.FACTOR, SECOND.FACTOR, PEDESTRIAN, DATE)
+baton_rouge$year <- strptime(as.character(baton_rouge$CRASH.DATE), "%m/%d/%Y")
+baton_rouge$year <- format(baton_rouge$year, "%Y")
+br_data <- select(baton_rouge, OCCURED.ON, FATALITY, INJURY, PRIMARY.FACTOR, SECOND.FACTOR, PEDESTRIAN, year)
 ```
 
-```{r baton_rouge_data_cleaning}
+```{r baton_rouge_data_cleaning, include=FALSE}
 br_data$FATALITY[br_data$FATALITY == ""] <- 0
 br_data$FATALITY[br_data$FATALITY == "X"] <- 1
 br_data$FATALITY <- as.numeric(br_data$FATALITY)
@@ -51,48 +56,67 @@ br_data$PEDESTRIAN[br_data$PEDESTRIAN == "X"] <- as.numeric(1)
 br_data$PEDESTRIAN <- as.numeric(br_data$PEDESTRIAN)
 
 br_data$SECOND.FACTOR[br_data$SECOND.FACTOR == ""] <- "NONE"
+```
 
+```{r br_summary}
 br_summary <- summary(br_data)
 br_summary
 ```
 
-```{r br_desc_stats}
+```{r br_desc_stats, include=FALSE}
 primary_factors_br <- unique(br_data$PRIMARY.FACTOR)
 
-accident_totals <- br_data %>% group_by("primary_reason" = br_data$PRIMARY.FACTOR) %>% count()
-year_totals <- br_data %>% group_by("year" = br_data$DATE) %>% count()
+accident_totals <- br_data %>% group_by("primary_reason" = br_data$PRIMARY.FACTOR) %>% count(name = "total_obs")
+year_totals <- br_data %>% group_by("year" = br_data$year) %>% count(name = "year_totals")
 
-br_fatality <- subset(br_data, subset = (FATALITY == "1")) 
-fatality_counts <- br_data %>% group_by(DATE) %>% filter(FATALITY == 1) %>% count()
-fatality_counts$DATE <- as.numeric(fatality_counts$DATE)
+br_fatality <- subset(br_data, subset = (FATALITY == 1)) 
+fatality_counts <- br_data %>% group_by(year) %>% filter(FATALITY == 1) %>% count(name = "fatality_counts")
+fatality_counts$year <- as.numeric(fatality_counts$year)
+# fatality_lm <- lm(fatality_counts~year, data = fatality_counts)
+# predicted_fatality <- data.frame(fatality_pred = predict(fatality_counts, fatality_lm))
 
 br_no_fatality <- subset(br_data, subset = (FATALITY == 0))
-no_fatality_count <- br_no_fatality %>% group_by(DATE) %>% count()
-no_fatality_count$DATE <- as.numeric(no_fatality_count$DATE)
-
-fatality_totals <- c(fatality_counts$n, no_fatality_count$n)
-
+no_fatality_count <- br_no_fatality %>% group_by(year) %>% filter(FATALITY == 0) %>% count(name = "no_fatality_counts") %>% filter(year < 2021)
+no_fatality_count$year <- as.numeric(no_fatality_count$year)
+```
+```{r fatality plot}
 fatality_plot <- ggplot() +
-  geom_point(data = fatality_counts, aes(DATE, n))+
-  geom_point(data = no_fatality_count, aes(DATE, n))+
-  xlim(c(2010, 2021)) +
+  geom_point(data = fatality_counts, aes(year, fatality_counts), colour = "red")+
+  # geom_line(colour = "red2", data = predicted_fatality, aes(x = year, y = fatality_counts)) +
+  geom_point(data = no_fatality_count, aes(year, no_fatality_counts), colour = "blue")+
+  # geom_smooth(method = 'lm', formula = no_fatality_counts~year) +
+  xlim(c(2010, 2020)) +
   scale_y_continuous(trans = 'log2') +
-  xlab("Total Number of Fatalities") +
-  ylab("Year")
+  ylab("Total Number of Fatalities") +
+  xlab("Year")
 print(fatality_plot + ggtitle("Number of Car Accidents in Baton Rouge from 2010-2021"))
+```
+```{r descriptive}
+fatality_count_br <- br_fatality %>% group_by(br_fatality$year) %>% count()
+no_fatality_count_br <- br_no_fatality %>% group_by(br_no_fatality$year) %>% count()
 
-fatality_count_br <- br_fatality %>% group_by(br_fatality$DATE) %>% count()
-no_fatality_count_br <- br_no_fatality %>% group_by(br_no_fatality$DATE) %>% count()
-
-br_desc_plot <- ggplot(accident_totals, aes(x=n, y=primary_reason)) +
+br_desc_plot <- ggplot(accident_totals, aes(x=total_obs, y=primary_reason)) +
   geom_bar(stat="identity") +
   ylab("Cause of Accident") +
   xlab("Frequency") +
   scale_x_continuous(trans = 'log2')
 print(br_desc_plot + ggtitle("Cause of Car Accidents in Baton Rouge from 2010-2021"))
 
-summary(accident_totals$n)
+summary(accident_totals$total_obs)
 ```
+
+```{r br_population}
+br_pop <- baton_rouge_population %>% filter(`Geographic Area` == "Baton Rouge city, Louisiana") %>% select("2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019")
+br_pop_rotated <- br_pop %>% pivot_longer(br_pop, cols = starts_with("20"), names_to = "year", values_to = "pop")
+baton_rouge_fat_no_fat <- merge(fatality_counts, no_fatality_count, by = "year")
+baton_rouge_totals <- merge(baton_rouge_fat_no_fat, br_pop_rotated, by = "year")
+#size_of_baton_rouge <- c(77.1)
+```
+```{r br_regression}
+baton_rouge_regression <- summary(lm(fatality_counts ~ pop, data = baton_rouge_totals))
+baton_rouge_regression
+```
+R squared is too small to be described as accurately predicting the data. The p-value is too large to describe the correlation between car accident fatality and population changes from 2010-2019, from the size of the p-value, we fail to reject the null hypothesis.
 ```{r br_function_extra, include=FALSE}
 # frequency_by_year <- function(data, variable_of_interest, time_variable, year){
 #   counts <- table(data %>% group_by("variable_of_interest" = data$variable_of_interest) %>% count())
@@ -133,30 +157,57 @@ sea_data_summary <- summary(sea_data)
 sea_data_summary
 ```
 
-```{r tempe}
+```{r tempe data manipulation}
 #initial filter of columns
 tempe_filter <- tempe_data %>%
   select(Year, Totalinjuries, Totalfatalities, Injuryseverity, AlcoholUse_Drv1,
          DrugUse_Drv1, Unitaction_One, Violation1_Drv1, StreetName, CrossStreet, Lightcondition,
          JunctionRelation,Weather, SurfaceCondition) 
 
+#filters out blank rows
 tempe_filter <- tempe_filter[!(tempe_filter$AlcoholUse_Drv1 == ""), ]
+```
 
-
-
+```{r tempe summary}
 #2012-2019
 count(tempe_filter, Totalfatalities > 0)
 # only 87 accidents with fatalities
 
 summary(tempe_filter)
+```
 
-
+```{r tempe injury plot}
+#simple barplot
 ggplot(tempe_filter) +
-  geom_bar(aes(x = Injuryseverity))
+  geom_bar(aes(x = Injuryseverity)) +
+  theme(axis.text.x = element_text(size = 6))
+```
+```{r tempe stacked bar plot}
+#test dont work
+#(tempe_filter) +
+ # geom_bar(aes(x = Injuryseverity, y = n), stat = "Year")
+
+#testing aggregating counts for stacked bar chart
+tempe_aggregate <- count(tempe_filter, Year, Totalinjuries, AlcoholUse_Drv1)
 
 
 
-#tempe populations
+tempe_ord <- mutate(tempe_aggregate,
+                     Totalinjuries = reorder(Totalinjuries, -n, sum),
+                     AlcoholUse_Drv1 = reorder(AlcoholUse_Drv1, -n, sum))
+
+
+#stacked bar plot showing number of injuries in accordance to alcohol influence
+tempe_alcinf <- ggplot(tempe_aggregate) +
+  geom_col(aes(x = AlcoholUse_Drv1, y = n, fill = Totalinjuries))
+
+#makes multiple charts for each year
+tempe_alcinf + facet_wrap(~ Year)
+ 
+#need to find proportions instead of counts to account for the much higher number
+#of occurances for non-influence driving
+
+#tempe populations for future reference
 tempepop_2012 <- 164139
 tempepop_2013 <- 164742
 tempepop_2014 <- 166975
