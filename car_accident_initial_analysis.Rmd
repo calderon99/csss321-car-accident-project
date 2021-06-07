@@ -17,7 +17,7 @@ library(ggplot2)
 
 ```{r load, include=FALSE}
 baton_rouge_data <- read.csv("data/Baton_Rouge_Traffic_Incidents.csv")
-baton_rouge_population <- read_xlsx("data/baton_rouge_pop.xlsx")
+baton_rouge_population <- read_xlsx("data/baton_rouge_pop2.xlsx")
 seattle_data <- read.csv("data/seattle_Collisions.csv")
 tempe_data <- read.csv("data/tempe_Crash_Data_Report__detail_.csv")
 national_data <- read_xlsx("data/nhtsa_yearly_national_stats.xlsx")
