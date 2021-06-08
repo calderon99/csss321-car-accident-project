@@ -76,8 +76,6 @@ year_totals <- br_data %>% group_by("year" = br_data$year) %>% count(name = "yea
 br_fatality <- subset(br_data, subset = (FATALITY == 1)) 
 fatality_counts <- br_data %>% group_by(year) %>% filter(FATALITY == 1) %>% count(name = "fatality_counts")
 fatality_counts$year <- as.numeric(fatality_counts$year)
-# fatality_lm <- lm(fatality_counts~year, data = fatality_counts)
-# predicted_fatality <- data.frame(fatality_pred = predict(fatality_counts, fatality_lm))
 
 br_no_fatality <- subset(br_data, subset = (FATALITY == 0))
 no_fatality_count <- br_no_fatality %>% group_by(year) %>% filter(FATALITY == 0) %>% count(name = "no_fatality_counts") %>% filter(year < 2021)
@@ -87,9 +85,7 @@ no_fatality_count$year <- as.numeric(no_fatality_count$year)
 ```{r fatality_plot_work, include=FALSE}
 fatality_plot <- ggplot() +
   geom_point(data = fatality_counts, aes(year, fatality_counts), colour = "red")+
-  # geom_line(colour = "red2", data = predicted_fatality, aes(x = year, y = fatality_counts)) +
   geom_point(data = no_fatality_count, aes(year, no_fatality_counts), colour = "blue")+
-  # geom_smooth(method = 'lm', formula = no_fatality_counts~year) +
   xlim(c(2010, 2020)) +
   scale_y_continuous(trans = 'log2') +
   ylab("Total Number of Fatalities") +
@@ -133,15 +129,6 @@ baton_rouge_regression <- summary(lm(fatality_counts ~ pop_density + year, data 
 baton_rouge_regression
 ```
 R squared is too small to be described as accurately predicting the data. The p-value is too large to describe the correlation between car accident fatality and population changes from 2010-2019, from the size of the p-value, we fail to reject the null hypothesis.
-```{r br_function_extra, include=FALSE}
-# frequency_by_year <- function(data, variable_of_interest, time_variable, year){
-#   counts <- table(data %>% group_by("variable_of_interest" = data$variable_of_interest) %>% count())
-#   year_total <- filter()
-#   
-#   
-#   return()
-#} #finish function to return bar plot of accidents and yearly totals
-```
 
 
 ```{r seattle}
