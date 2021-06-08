@@ -250,7 +250,8 @@ tempe_ord <- mutate(tempe_aggregate,
 
 #stacked bar plot showing number of injuries in accordance to alcohol influence
 tempe_alcinf <- ggplot(tempe_aggregate) +
-  geom_col(aes(x = AlcoholUse_Drv1, y = n, fill = Totalinjuries))
+  geom_col(aes(x = AlcoholUse_Drv1, y = n, fill = Totalinjuries))+
+  scale_y_continuous(trans = 'log2')
 
 #makes multiple charts for each year
 print(tempe_alcinf + facet_wrap(~ Year) + ggtitle("Faceted Stacked Charts Showing Injuries Caused by Alcohol Influence"))
