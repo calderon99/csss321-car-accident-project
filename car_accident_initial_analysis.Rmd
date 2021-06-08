@@ -159,7 +159,7 @@ seattle_data$ADDRTYPE[seattle_data$ADDRTYPE == ""] <- NA
 seattle_data$UNDERINFL[seattle_data$UNDERINFL == ""] <- NA
 seattle_data$UNDERINFL[seattle_data$UNDERINFL == "0"] <- NA
 seattle_data$SPEEDING[seattle_data$SPEEDING == ""] <- NA
-seattle_data$SEVERITYDESC[seattle_data$SEVERITYDESC == "Unknown"] <- NA
+seattle_data$SEVERITYDESC[seattle_data$SEVERITYDESC == "Unknown"] <- "Inconclusive"
 seattle_data$FATALITIES[seattle_data$FATALITIES == "2"] <- "1"
 seattle_data$FATALITIES[seattle_data$FATALITIES == "5"] <- "1"
 
