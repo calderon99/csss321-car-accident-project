@@ -98,24 +98,29 @@ fatality_plot <- ggplot() +
 print(fatality_plot + ggtitle("Number of Car Accidents in Baton Rouge from 2010-2021"))
 ```
 
-```{r descriptive}
+```{r descriptive, include=FALSE}
 fatality_count_br <- br_fatality %>% group_by(br_fatality$year) %>% count()
 no_fatality_count_br <- br_no_fatality %>% group_by(br_no_fatality$year) %>% count()
-
+```
+```{r descript_plot}
 br_desc_plot <- ggplot(accident_totals, aes(x=total_obs, y=primary_reason)) +
   geom_bar(stat="identity") +
   ylab("Cause of Accident") +
   xlab("Frequency") +
   scale_x_continuous(trans = 'log2')
 print(br_desc_plot + ggtitle("Cause of Car Accidents in Baton Rouge from 2010-2021"))
+```
 
+```{r summary stats, include=FALSE}
 summary(accident_totals$total_obs)
 ```
 
-```{r br_population}
+```{r br_population, include=FALSE}
 br_pop <- baton_rouge_population %>% filter(`Geographic Area` == "Baton Rouge city, Louisiana") %>% select("2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019")
 br_pop_rotated <- br_pop %>% pivot_longer(br_pop, cols = starts_with("20"), names_to = "year", values_to = "pop")
 baton_rouge_fat_no_fat <- merge(fatality_counts, no_fatality_count, by = "year")
+```
+```{r merged_data_baton_rouge}
 baton_rouge_totals <- merge(baton_rouge_fat_no_fat, br_pop_rotated, by = "year")
 br_area <- 88.65
 baton_rouge_totals$pop_density <- (baton_rouge_totals$pop/br_area)
