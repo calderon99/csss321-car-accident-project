@@ -127,7 +127,6 @@ baton_rouge_fat_no_fat <- merge(fatality_counts, no_fatality_count, by = "year")
 baton_rouge_totals <- merge(baton_rouge_fat_no_fat, br_pop_rotated, by = "year")
 br_area <- 88.65
 baton_rouge_totals$pop_density <- (baton_rouge_totals$pop/br_area)
-
 ```
 
 ```{r br_regression}
