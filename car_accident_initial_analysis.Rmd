@@ -19,6 +19,7 @@ library(ggplot2)
 baton_rouge_data <- read.csv("data/Baton_Rouge_Traffic_Incidents.csv")
 baton_rouge_population <- read_xlsx("data/baton_rouge_pop2.xlsx")
 seattle_data <- read.csv("data/seattle_Collisions.csv")
+seattle_population <- read_xlsx("data/seattle_population.xlsx")
 tempe_data <- read.csv("data/tempe_Crash_Data_Report__detail_.csv")
 national_data <- read_xlsx("data/nhtsa_yearly_national_stats.xlsx")
 ```
@@ -71,6 +72,7 @@ primary_factors_br <- unique(br_data$PRIMARY.FACTOR)
 
 accident_totals <- br_data %>% group_by("primary_reason" = br_data$PRIMARY.FACTOR) %>% count(name = "total_obs")
 year_totals <- br_data %>% group_by("year" = br_data$year) %>% count(name = "year_totals")
+
 
 br_fatality <- subset(br_data, subset = (FATALITY == 1)) 
 fatality_counts <- br_data %>% group_by(year) %>% filter(FATALITY == 1) %>% count(name = "fatality_counts")
@@ -146,34 +148,85 @@ R squared is too small to be described as accurately predicting the data. The p-
 
 ```{r seattle}
 ##Filter unnecessary columns
-seattle_data <- select(seattle_data, PERSONCOUNT, VEHCOUNT, INJURIES, SERIOUSINJURIES, FATALITIES, INCDTTM, JUNCTIONTYPE, UNDERINFL, WEATHER, ROADCOND, LIGHTCOND, SPEEDING)
+seattle_data <- select(seattle_data, ADDRTYPE, INJURIES, SERIOUSINJURIES, FATALITIES, INCDTTM, SEVERITYDESC, UNDERINFL, SPEEDING)
 
 ##Change date to only year
 seattle_data$date <- strptime(as.character(seattle_data$INCDTTM), "%m/%d/%Y")
 seattle_data$date <- format(seattle_data$date, "%Y")
 
-##Change blanks to NA
-seattle_data$PERSONCOUNT[seattle_data$PERSONCOUNT == "0"] <- "NA"
-seattle_data$VEHCOUNT[seattle_data$VEHCOUNT == "0"] <- "NA"
-seattle_data$JUNCTIONTYPE[seattle_data$JUNCTIONTYPE == ""] <- "NA"
+##Change blanks to NA & fix columns
+seattle_data$ADDRTYPE[seattle_data$ADDRTYPE == ""] <- "NA"
 seattle_data$UNDERINFL[seattle_data$UNDERINFL == ""] <- "NA"
-seattle_data$WEATHER[seattle_data$WEATHER == ""] <- "NA"
-seattle_data$ROADCOND[seattle_data$ROADCOND == ""] <- "NA"
-seattle_data$LIGHTCOND[seattle_data$LIGHTCOND == ""] <- "NA"
+seattle_data$UNDERINFL[seattle_data$UNDERINFL == "0"] <- "NA"
 seattle_data$SPEEDING[seattle_data$SPEEDING == ""] <- "N"
+seattle_data$SEVERITYDESC[seattle_data$SEVERITYDESC == "Unknown"] <- "NA"
+seattle_data$FATALITIES[seattle_data$FATALITIES == "2"] <- "1"
+seattle_data$FATALITIES[seattle_data$FATALITIES == "5"] <- "1"
+
 
 ##Subset to years in used in analysis
 sea_data <- subset(seattle_data, subset = (date >= "2012" & date <= "2019"))
-
 sea_data <- na.omit(sea_data)
-sea_fatality <- subset(sea_data, subset = (FATALITIES >= "1"))
-sea_no_fatality <- subset(sea_data, subset = (FATALITIES == "0"))
-
 sea_data_summary <- summary(sea_data)
 sea_data_summary
+
+accident_totals_sea <- sea_data %>% group_by("SEVERITYDESC" = sea_data$SEVERITYDESC) %>% count(name = "total_obs")
+year_totals_sea <- sea_data %>% group_by("year" = sea_data$date) %>% count(name = "year_totals")
+accident_totals_sea
+year_totals_sea
+
+sea_fatality <- subset(sea_data, subset = (FATALITIES == 1))
+fatality_counts_sea <- sea_data %>% group_by(date) %>% filter(FATALITIES == 1) %>% count(name = "fatality_counts")
+fatality_counts_sea$date <- as.numeric(fatality_counts_sea$date)
+
+sea_no_fatality <- subset(sea_data, subset = (FATALITIES == 0))
+no_fatality_count_sea <- sea_no_fatality %>% group_by(date) %>% filter(FATALITIES == 0) %>% count(name = "no_fatality_counts") %>% filter(date < 2021)
+no_fatality_count_sea$date <- as.numeric(no_fatality_count_sea$date)
+
+# fatality_lm <- lm(fatality_counts_sea~date, data = fatality_counts_sea)
+# predicted_fatality <- data.frame(fatality_pred = predict(fatality_counts_sea, fatality_lm))
+
 ```
 
+<<<<<<< HEAD
+```{r}
+##Did my best, not sure why its not running
+fatality_plot_sea <- ggplot() +
+  geom_point(data = fatality_counts_sea, aes(date, fatality_counts_sea), colour = "red")+
+  # geom_line(colour = "red2", data = predicted_fatality, aes(x = year, y = fatality_counts_sea)) +
+  geom_point(data = no_fatality_count_sea, aes(date, no_fatality_count_sea), colour = "blue")+
+  # geom_smooth(method = 'lm', formula = no_fatality_count_sea~date) +
+  xlim(c(2012, 2019)) +
+  scale_y_continuous(trans = 'log2') +
+  ylab("Total Number of Fatalities") +
+  xlab("Year")
+print(fatality_plot_sea + ggtitle("Number of Car Accidents in Seattle from 2012-2020"))
+```
+
+
+```{r}
+##Plot Severity of Accidents
+ggplot(sea_data) +
+  geom_bar(aes(x = SEVERITYDESC)) +
+  theme(axis.text.x = element_text(size = 6))
+```
+
+
+
+
+
+
+```{r}
+
+
+
+
+
+
+```{r tempe data manipulation}
+=======
 ```{r tempe data manipulation, include=FALSE}
+>>>>>>> 00a8314f2df502ad17ab84bb707ac8a7ffd45f66
 #initial filter of columns
 tempe_filter <- tempe_data %>%
   select(Year, Totalinjuries, Totalfatalities, Injuryseverity, AlcoholUse_Drv1,
