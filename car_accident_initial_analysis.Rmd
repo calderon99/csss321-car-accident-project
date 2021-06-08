@@ -186,7 +186,7 @@ fatality_plot_sea <- ggplot() +
   xlab("Year")
 print(fatality_plot_sea + ggtitle("Number of Car Accidents in Seattle from 2012-2019"))
 ```
-
+The only two trends that one can see in this graph is that the number of fatalities and number of non fatalities in car accidents stay relatively consistent year over year.
 
 ```{r}
 ##Plot Severity of Accidents
@@ -198,6 +198,7 @@ sea_severity <- ggplot(sea_data) +
   ylab("Total Observed")
 print(sea_severity + ggtitle("Total Severity of Accidents in Seattle"))
 ```
+The most frequent occurrence is the least severe accident, "Property Damage Only Collusion", following a more severe "Injury Collusion", an even more severe "Serious Injury Collusion", and finally the most severe, "Fatality Collusion", being the least likely occurrence. 
 ```{r}
 seattle_fat_no_fat<- merge(fatality_counts_sea, no_fatality_count_sea, by = "Year")
 seattle_totals <- merge(seattle_fat_no_fat, seattle_population, by = "Year")
@@ -207,6 +208,8 @@ seattle_totals$pop_density <- (seattle_totals$Population/seattle_area)
 seattle_regression <- summary(lm(fatality_counts ~ pop_density + Year, data = seattle_totals))
 seattle_regression
 ```
+We fail to reject the null hypothesis due to the p-value being extremely too high to fit the .05 significance level. 
+
 
 ```{r tempe data manipulation, include=FALSE}
 #initial filter of columns
