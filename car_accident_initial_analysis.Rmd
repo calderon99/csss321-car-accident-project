@@ -250,7 +250,7 @@ tempe_totals$Year <- as.numeric(tempe_totals$Year)
 tempe_pops <- c(tempepop_2012, tempepop_2013, tempepop_2014, tempepop_2015,
                  tempepop_2016, tempepop_2017, tempepop_2018, tempepop_2019)
 #appends populations
-tempe_totals$Population <- tempe_pops1
+tempe_totals$Population <- tempe_pops
 #appends population density
 tempe_totals$pop_density <- (tempe_totals$Population/tempe_area)
 
