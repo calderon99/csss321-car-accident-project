@@ -191,9 +191,9 @@ no_fatality_count_sea$date <- as.numeric(no_fatality_count_sea$date)
 ```{r}
 ##Did my best, not sure why its not running
 fatality_plot_sea <- ggplot() +
-  geom_point(data = fatality_counts_sea, aes(date, fatality_counts_sea), colour = "red")+
+  geom_point(data = fatality_counts_sea, aes(date, fatality_counts), colour = "red")+
   # geom_line(colour = "red2", data = predicted_fatality, aes(x = year, y = fatality_counts_sea)) +
-  geom_point(data = no_fatality_count_sea, aes(date, no_fatality_count_sea), colour = "blue")+
+  geom_point(data = no_fatality_count_sea, aes(date, no_fatality_counts), colour = "blue")+
   # geom_smooth(method = 'lm', formula = no_fatality_count_sea~date) +
   xlim(c(2012, 2019)) +
   scale_y_continuous(trans = 'log2') +
