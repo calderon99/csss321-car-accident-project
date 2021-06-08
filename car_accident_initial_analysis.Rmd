@@ -31,8 +31,6 @@ Our hypothesis is that fatalities increase as population density increases. We b
 ## 2. Data Descriptions
 We found out data of data.gov, a site that compiles statistical data that the government produces. There were tons of different datasets to chose from, whether national, state, city, town, county, etc. However, after looking through all the options, the Baton Rouge, Seattle, and Tempe datasets, seemed more complete, most detailed, and most up to date. Once we started looking at the data, we decided to narrow down our focus to more specific variables such as year, fatality, injury, and factors/causes of accidents.
 
-`https://catalog.data.gov/dataset?tags=crash&_res_format_limit=0`
-
 ## Baton Rouge Data
 ```{r baton_rouge_maniputalion, include=FALSE}
 baton_rouge <- select(baton_rouge_data, CRASH.DATE, OCCURED.ON, FATALITY, INJURY, PRIMARY.FACTOR, SECOND.FACTOR, PEDESTRIAN)
@@ -65,6 +63,7 @@ br_data$SECOND.FACTOR[br_data$SECOND.FACTOR == ""] <- "NONE"
 ```{r br_summary}
 br_summary <- summary(br_data)
 br_summary
+# number_na <- sum(is.na(br_data))
 ```
 
 ```{r br_desc_stats, include=FALSE}
@@ -137,8 +136,8 @@ R squared is too small to be described as accurately predicting the data. The p-
 seattle_data <- select(seattle_data, ADDRTYPE, INJURIES, SERIOUSINJURIES, FATALITIES, INCDTTM, SEVERITYDESC, UNDERINFL, SPEEDING)
 
 ##Change date to only year
-seattle_data$date <- strptime(as.character(seattle_data$INCDTTM), "%m/%d/%Y")
-seattle_data$date <- format(seattle_data$date, "%Y")
+seattle_data$Year <- strptime(as.character(seattle_data$INCDTTM), "%m/%d/%Y")
+seattle_data$Year <- format(seattle_data$Year, "%Y")
 
 ##Change blanks to NA & fix columns
 seattle_data$ADDRTYPE[seattle_data$ADDRTYPE == ""] <- NA
@@ -151,25 +150,25 @@ seattle_data$FATALITIES[seattle_data$FATALITIES == "5"] <- "1"
 
 
 ##Subset to years in used in analysis
-sea_data <- subset(seattle_data, subset = (date >= "2012" & date <= "2019"))
+sea_data <- subset(seattle_data, subset = (Year >= "2012" & Year <= "2019"))
 sea_data <- na.omit(sea_data)
 sea_data_summary <- summary(sea_data)
 sea_data_summary
 
 accident_totals_sea <- sea_data %>% group_by("SEVERITYDESC" = sea_data$SEVERITYDESC) %>% count(name = "total_obs")
-year_totals_sea <- sea_data %>% group_by("year" = sea_data$date) %>% count(name = "year_totals")
+year_totals_sea <- sea_data %>% group_by("Year" = sea_data$Year) %>% count(name = "year_totals")
 accident_totals_sea
 year_totals_sea
 
 sea_fatality <- subset(sea_data, subset = (FATALITIES == 1))
-fatality_counts_sea <- sea_data %>% group_by(date) %>% filter(FATALITIES == 1) %>% count(name = "fatality_counts")
-fatality_counts_sea$date <- as.numeric(fatality_counts_sea$date)
+fatality_counts_sea <- sea_data %>% group_by(Year) %>% filter(FATALITIES == 1) %>% count(name = "fatality_counts")
+fatality_counts_sea$Year <- as.numeric(fatality_counts_sea$Year)
 
 sea_no_fatality <- subset(sea_data, subset = (FATALITIES == 0))
-no_fatality_count_sea <- sea_no_fatality %>% group_by(date) %>% filter(FATALITIES == 0) %>% count(name = "no_fatality_counts") %>% filter(date < 2021)
-no_fatality_count_sea$date <- as.numeric(no_fatality_count_sea$date)
+no_fatality_count_sea <- sea_no_fatality %>% group_by(Year) %>% filter(FATALITIES == 0) %>% count(name = "no_fatality_counts") %>% filter(Year < 2021)
+no_fatality_count_sea$Year <- as.numeric(no_fatality_count_sea$Year)
 
-# fatality_lm <- lm(fatality_counts_sea~date, data = fatality_counts_sea)
+# fatality_lm <- lm(fatality_counts_sea~Year, data = fatality_counts_sea)
 # predicted_fatality <- data.frame(fatality_pred = predict(fatality_counts_sea, fatality_lm))
 
 ```
@@ -177,15 +176,15 @@ no_fatality_count_sea$date <- as.numeric(no_fatality_count_sea$date)
 ```{r}
 ##Did my best, not sure why its not running
 fatality_plot_sea <- ggplot() +
-  geom_point(data = fatality_counts_sea, aes(date, fatality_counts), colour = "red")+
-  # geom_line(colour = "red2", data = predicted_fatality, aes(x = year, y = fatality_counts_sea)) +
-  geom_point(data = no_fatality_count_sea, aes(date, no_fatality_counts), colour = "blue")+
-  # geom_smooth(method = 'lm', formula = no_fatality_count_sea~date) +
+  geom_point(data = fatality_counts_sea, aes(Year, fatality_counts), colour = "red")+
+  # geom_line(colour = "red2", data = predicted_fatality, aes(x = Year, y = fatality_counts_sea)) +
+  geom_point(data = no_fatality_count_sea, aes(Year, no_fatality_counts), colour = "blue")+
+  # geom_smooth(method = 'lm', formula = no_fatality_count_sea~Year) +
   xlim(c(2012, 2019)) +
   scale_y_continuous(trans = 'log2') +
   ylab("Total Number of Fatalities") +
   xlab("Year")
-print(fatality_plot_sea + ggtitle("Number of Car Accidents in Seattle from 2012-2020"))
+print(fatality_plot_sea + ggtitle("Number of Car Accidents in Seattle from 2012-2019"))
 ```
 
 
@@ -198,6 +197,15 @@ sea_severity <- ggplot(sea_data) +
   xlab("Accident Result")+
   ylab("Total Observed")
 print(sea_severity + ggtitle("Total Severity of Accidents in Seattle"))
+```
+```{r}
+seattle_fat_no_fat<- merge(fatality_counts_sea, no_fatality_count_sea, by = "Year")
+seattle_totals <- merge(seattle_fat_no_fat, seattle_population, by = "Year")
+seattle_area <- 83.78
+seattle_totals$pop_density <- (seattle_totals$Population/seattle_area)
+
+seattle_regression <- summary(lm(fatality_counts ~ pop_density + Year, data = seattle_totals))
+seattle_regression
 ```
 
 ```{r tempe data manipulation, include=FALSE}
