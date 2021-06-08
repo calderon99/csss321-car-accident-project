@@ -167,7 +167,7 @@ tempe_filter <- tempe_filter[!(tempe_filter$AlcoholUse_Drv1 == ""), ]
 
 ```{r tempe summary}
 #2012-2019
-count(tempe_filter, Totalfatalities > 0)
+# count(tempe_filter, Totalfatalities > 0 & Year == 2013) REMOVE
 # only 87 accidents with fatalities
 
 summary(tempe_filter)
@@ -204,6 +204,10 @@ tempe_alcinf + facet_wrap(~ Year)
 #need to find proportions instead of counts to account for the much higher number
 #of occurances for non-influence driving
 
+
+```
+
+```{r tempe population}
 #tempe populations for future reference
 tempepop_2012 <- 164139
 tempepop_2013 <- 164742
@@ -216,4 +220,37 @@ tempepop_2019 <- 187454
 
 #tempe area mi^2
 tempe_area <- 40.22
+
+count(tempe_filter, Year == 2012 & Totalfatalities == 0)
+
+
+#filters fatalities by year
+tempe_population <- tempe_filter %>%
+  group_by(Year) %>%
+  summarise(Fatalities = sum(Totalfatalities)) %>%
+  select(Year, Fatalities)
+
+#filters accidents with no fatalites by year
+tempe_no_fatal <- tempe_filter %>%
+  group_by(Year) %>%
+  filter(Totalfatalities == 0) %>%
+  count(name = "no_fatalities")
+
+#merges fatalities and no fatalities by year
+tempe_totals <- merge(tempe_population, tempe_no_fatal)
+
+tempe_totals$Year <- as.numeric(tempe_totals$Year)
+
+#populations by year
+tempe_pops <- c(tempepop_2012, tempepop_2013, tempepop_2014, tempepop_2015,
+                 tempepop_2016, tempepop_2017, tempepop_2018, tempepop_2019)
+#appends populations
+tempe_totals$Population <- tempe_pops1
+#appends population density
+tempe_totals$pop_density <- (tempe_totals$Population/tempe_area)
+
+```
+```{r tempe regression}
+tempe_regression <- summary(lm(Fatalities ~ pop_density + Year, data = tempe_totals))
+tempe_regression
 ```
