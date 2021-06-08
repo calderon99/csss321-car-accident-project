@@ -210,22 +210,7 @@ ggplot(sea_data) +
   theme(axis.text.x = element_text(size = 6))
 ```
 
-
-
-
-
-
-```{r}
-
-
-
-
-
-
-```{r tempe data manipulation}
-=======
 ```{r tempe data manipulation, include=FALSE}
->>>>>>> 00a8314f2df502ad17ab84bb707ac8a7ffd45f66
 #initial filter of columns
 tempe_filter <- tempe_data %>%
   select(Year, Totalinjuries, Totalfatalities, Injuryseverity, AlcoholUse_Drv1,
