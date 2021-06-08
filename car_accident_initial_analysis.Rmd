@@ -347,7 +347,7 @@ print(fatality_plot_sea + ggtitle("Number of Car Accidents in Seattle from 2012-
 seattle_regression
 ```
 
-Similarly in Tempe, there was a much higher number of non-fatal accidents copared witht he number of fatal accidents. The change in population over the years did not have a significant impact on the number of fatalities but did seem to increase the number of accidents. The population in Tempe is known to have been growing over the recent years but again this impact was not significant based on the regression. The regression shows the r-squared value represents a somewhat high amount of variability and does not accurately predict the data. The p-value is also too large to determine a correlation in fatalities and population in Tempe. Once again, we fail to reject the null hypthesis with the Tempe data. 
+Similarly in Tempe, there was a much higher number of non-fatal accidents compared with he number of fatal accidents. The change in population over the years did not have a significant impact on the number of fatalities but did seem to increase the number of accidents. The population in Tempe is known to have been growing over the recent years but again this impact was not significant based on the regression. The regression shows the r-squared value represents a somewhat high amount of variability and does not accurately predict the data. The p-value is also too large to determine a correlation in fatalities and population in Tempe. Once again, we fail to reject the null hypothesis with the Tempe data. 
 ```{r dylans_scatterplot_regression}
 print(tempe_fatality_plot + ggtitle("Fatalities in Tempe Accidents 2012-2019"))
 
