@@ -23,28 +23,6 @@ seattle_population <- read_xlsx("data/seattle_population.xlsx")
 tempe_data <- read.csv("data/tempe_Crash_Data_Report__detail_.csv")
 national_data <- read_xlsx("data/nhtsa_yearly_national_stats.xlsx")
 ```
-## 1. Introduction
-For our final report we decided to study car crash data in 3 US cities, Baton Rouge, Louisiana; Seattle, Washington; and Tempe, Arizona. We chose these three cities because of their similarities and differences. Baton Rouge is a relatively stagnant city with respect to population and area, neither having grown much in the past 10 years, with population actually slightly declining. Seattle, because it has not increased in area, but its a;ready high population has increased at the third fastest rate in the country. Finally, we chose Tempe because has also been increasing a rapid rate, but it has a lower population than Seattle. The differing populations in these cities and their trends are what inclined us to chose them, as well as having the most available and most well documented data that we could find. Our research question in these three cities was: how accurate of a predictor is population density with respect to fatal car accidents?
-
-Our hypothesis is that fatalities increase as population density increases. We believe this is the case, because the growth of a city is often correlated with increased economic activity, bringing more upper and middle class people into the city. This results in more cars in the city, and more drivers on the road. This can also create more foot traffic in areas of highly populated cities and result in more accidents, and therefore more fatal accidents. This is our hypothesis, we believe it is important to research this because it could help provide legislators and government officials with the information necessary to prevent excessive building permits, regulate road construction, and create overall better systems for traffic and prevent fatal accidents if possible. The opposite of our hypothesis would be that population density is not an accurate predictor of fatal car accidents.
-
-## 2. Data Descriptions
-We found out data of data.gov, a site that compiles statistical data that the government produces. There were tons of different datasets to chose from, whether national, state, city, town, county, etc. However, after looking through all the options, the Baton Rouge, Seattle, and Tempe datasets, seemed more complete, most detailed, and most up to date. Once we started looking at the data, we decided to narrow down our focus to more specific variables such as year, fatality, injury, and factors/causes of accidents. Depending on the city, there was slightly different information available for the accident. For example, the Baton
-Rouge data has a very clear variable "Primary.Factor" that labels the primary cause of the accident. In the
-Tempe data, the details label what might have caused the accident to occur. This includes alcohol
-influence, crashing at a junction, and the action the driver took that lead to the crash. The information and data from all cities is all similar but can be interpreted and read differently. In order for us to analyze the number of fatalities from accidents in these cities we narrowed down our variables by year. Per year, we kept number of fatalities, number of accidents without fatalities, population, and population density. With these variables for each city we can rug a regression to find the relationship between the size of the city and how fatal the accidents are. 
-
-## 3. Results - Scatterplots and Regressions
-Now we will show the results of our data.
-
-In Baton Rouge, there was a stark contrast between the number of fatal car accidents each year and the total number of accidents. After accounting for population changes during each year between 2010 and 2020, we were able to see that the changes between each year showed no significant pattern. This was further confirmed after running a regression on fatality counts and population density with respect to each year. The results of the regression showed that the Baton Rouge R squared is too small to be described as accurately predicting the data. The p-value is too large to describe the correlation between car accident fatality and population changes from 2010-2019, seeing as it is greater than .05. From the size of the p-value, we fail to reject the null hypothesis with the Baton Rouge data set. 
-```{r baton_scatter and regression}
-print(fatality_plot + ggtitle("Number of Car Accidents in Baton Rouge from 2010-2020"))
-
-baton_rouge_regression
-```
-
-## Baton Rouge Data
 ```{r baton_rouge_maniputalion, include=FALSE}
 baton_rouge <- select(baton_rouge_data, CRASH.DATE, OCCURED.ON, FATALITY, INJURY, PRIMARY.FACTOR, SECOND.FACTOR, PEDESTRIAN)
 br_dataframe <- sapply(baton_rouge, is.factor)
@@ -73,7 +51,7 @@ br_data$PEDESTRIAN <- as.numeric(br_data$PEDESTRIAN)
 br_data$SECOND.FACTOR[br_data$SECOND.FACTOR == ""] <- "NONE"
 ```
 
-```{r br_summary}
+```{r br_summary, include=FALSE}
 br_summary <- summary(br_data)
 br_summary
 ```
@@ -104,7 +82,7 @@ fatality_plot <- ggplot() +
   xlab("Year")
 ```
 
-```{r fatality_plot}
+```{r fatality_plot, include=FALSE}
 print(fatality_plot + ggtitle("Number of Car Accidents in Baton Rouge from 2010-2021"))
 ```
 
@@ -136,12 +114,12 @@ br_area <- 88.65
 baton_rouge_totals$pop_density <- (baton_rouge_totals$pop/br_area)
 ```
 
-```{r br_regression}
+```{r br_regression, include=FALSE}
 baton_rouge_regression <- summary(lm(fatality_counts ~ pop_density + year, data = baton_rouge_totals))
 baton_rouge_regression
 ```
 
-```{r seattle}
+```{r seattle, include=FALSE}
 ##Filter unnecessary columns
 seattle_data <- select(seattle_data, ADDRTYPE, INJURIES, SERIOUSINJURIES, FATALITIES, INCDTTM, SEVERITYDESC, UNDERINFL, SPEEDING)
 
@@ -183,7 +161,7 @@ no_fatality_count_sea$Year <- as.numeric(no_fatality_count_sea$Year)
 
 ```
 
-```{r}
+```{r sea_fatality, include=FALSE}
 ##Did my best, not sure why its not running
 fatality_plot_sea <- ggplot() +
   geom_point(data = fatality_counts_sea, aes(Year, fatality_counts), colour = "red")+
@@ -198,7 +176,7 @@ print(fatality_plot_sea + ggtitle("Number of Car Accidents in Seattle from 2012-
 ```
 
 
-```{r}
+```{r sea_plots, include=FALSE}
 ##Plot Severity of Accidents
 sea_severity <- ggplot(sea_data) +
   geom_bar(aes(x = SEVERITYDESC)) +
@@ -208,7 +186,7 @@ sea_severity <- ggplot(sea_data) +
   ylab("Total Observed")
 print(sea_severity + ggtitle("Total Severity of Accidents in Seattle"))
 ```
-```{r}
+```{r sea_regression, include=FALSE}
 seattle_fat_no_fat<- merge(fatality_counts_sea, no_fatality_count_sea, by = "Year")
 seattle_totals <- merge(seattle_fat_no_fat, seattle_population, by = "Year")
 seattle_area <- 83.78
@@ -229,11 +207,11 @@ tempe_filter <- tempe_data %>%
 tempe_filter <- tempe_filter[!(tempe_filter$AlcoholUse_Drv1 == ""), ]
 ```
 
-```{r tempe summary}
+```{r tempe summary, include=FALSE}
 summary(tempe_filter)
 ```
 
-```{r tempe injury plot}
+```{r tempe injury plot, include=FALSE}
 #simple barplot
 tempe_severity_plot <- ggplot(tempe_filter) +
   geom_bar(aes(x = Injuryseverity)) +
@@ -243,7 +221,7 @@ tempe_severity_plot <- ggplot(tempe_filter) +
   scale_y_continuous(trans = 'log2')
 print(tempe_severity_plot + ggtitle("Basic Plot Summarizing Injuries in Tempe"))
 ```
-```{r tempe stacked bar plot}
+```{r tempe stacked bar plot, include=FALSE}
 #testing aggregating counts for stacked bar chart
 tempe_aggregate <- count(tempe_filter, Year, Totalinjuries, AlcoholUse_Drv1)
 
@@ -307,7 +285,42 @@ tempe_totals$Population <- tempe_pops
 tempe_totals$pop_density <- (tempe_totals$Population/tempe_area)
 
 ```
-```{r tempe regression}
+```{r tempe regression, include=FALSE}
 tempe_regression <- summary(lm(Fatalities ~ pop_density + Year, data = tempe_totals))
 tempe_regression
 ```
+
+## 1. Introduction
+For our final report we decided to study car crash data in 3 US cities, Baton Rouge, Louisiana; Seattle, Washington; and Tempe, Arizona. We chose these three cities because of their similarities and differences. Baton Rouge is a relatively stagnant city with respect to population and area, neither having grown much in the past 10 years, with population actually slightly declining. Seattle, because it has not increased in area, but its a;ready high population has increased at the third fastest rate in the country. Finally, we chose Tempe because has also been increasing a rapid rate, but it has a lower population than Seattle. The differing populations in these cities and their trends are what inclined us to chose them, as well as having the most available and most well documented data that we could find. Our research question in these three cities was: how accurate of a predictor is population density with respect to fatal car accidents?
+
+Our hypothesis is that fatalities increase as population density increases. We believe this is the case, because the growth of a city is often correlated with increased economic activity, bringing more upper and middle class people into the city. This results in more cars in the city, and more drivers on the road. This can also create more foot traffic in areas of highly populated cities and result in more accidents, and therefore more fatal accidents. This is our hypothesis, we believe it is important to research this because it could help provide legislators and government officials with the information necessary to prevent excessive building permits, regulate road construction, and create overall better systems for traffic and prevent fatal accidents if possible. The opposite of our hypothesis would be that population density is not an accurate predictor of fatal car accidents.
+
+## 2. Data Descriptions
+We found out data of data.gov, a site that compiles statistical data that the government produces. There were tons of different datasets to chose from, whether national, state, city, town, county, etc. However, after looking through all the options, the Baton Rouge, Seattle, and Tempe datasets, seemed more complete, most detailed, and most up to date. Once we started looking at the data, we decided to narrow down our focus to more specific variables such as year, fatality, injury, and factors/causes of accidents. Depending on the city, there was slightly different information available for the accident. For example, the Baton
+Rouge data has a very clear variable "Primary.Factor" that labels the primary cause of the accident. In the
+Tempe data, the details label what might have caused the accident to occur. This includes alcohol
+influence, crashing at a junction, and the action the driver took that lead to the crash. The information and data from all cities is all similar but can be interpreted and read differently. In order for us to analyze the number of fatalities from accidents in these cities we narrowed down our variables by year. Per year, we kept number of fatalities, number of accidents without fatalities, population, and population density. With these variables for each city we can rug a regression to find the relationship between the size of the city and how fatal the accidents are. 
+
+## 3. Results - Scatterplots and Regressions
+Now we will show the results of our data.
+
+In Baton Rouge, there was a stark contrast between the number of fatal car accidents each year and the total number of accidents. After accounting for population changes during each year between 2010 and 2020, we were able to see that the changes between each year showed no significant pattern. This was further confirmed after running a regression on fatality counts and population density with respect to each year. The results of the regression showed that the Baton Rouge R squared is too small to be described as accurately predicting the data. The p-value is too large to describe the correlation between car accident fatality and population changes from 2010-2019, seeing as it is greater than .05. From the size of the p-value, we fail to reject the null hypothesis with the Baton Rouge data set. 
+```{r baton_scatter and regression}
+print(fatality_plot + ggtitle("Number of Car Accidents in Baton Rouge from 2010-2020"))
+
+baton_rouge_regression
+```
+#Trent's Analysis of Seattle data HERE
+```{r trents_seattle_scatterplot_regression}
+#copy past your print(function+ggtitle) here. DO NOT DELETE ANY CODE, JUST COPY PASTE
+
+#copy paste regression output here
+```
+#Dylan's Analysis of Tempe data HERE
+```{r dylans_scatterplot_regression}
+#copy past your print(function+ggtitle) here. DO NOT DELETE ANY CODE, JUST COPY PASTE
+
+#copy paste regression output here
+```
+
+## 4. Conclusion
