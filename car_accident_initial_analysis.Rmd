@@ -205,9 +205,13 @@ print(fatality_plot_sea + ggtitle("Number of Car Accidents in Seattle from 2012-
 
 ```{r}
 ##Plot Severity of Accidents
-ggplot(sea_data) +
+sea_severity <- ggplot(sea_data) +
   geom_bar(aes(x = SEVERITYDESC)) +
-  theme(axis.text.x = element_text(size = 6))
+  theme(axis.text.x = element_text(size = 6))+
+  scale_y_continuous(trans = 'log2')+
+  xlab("Accident Result")+
+  ylab("Total Observed")
+print(sea_severity + ggtitle("Total Severity of Accidents in Seattle"))
 ```
 
 ```{r tempe data manipulation, include=FALSE}
