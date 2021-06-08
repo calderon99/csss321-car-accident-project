@@ -186,12 +186,10 @@ sea_severity <- ggplot(sea_data) +
   ylab("Total Observed")
 print(sea_severity + ggtitle("Total Severity of Accidents in Seattle"))
 ```
-<<<<<<< HEAD
-```{r sea_regression, include=FALSE}
-=======
+
 The most frequent occurrence is the least severe accident, "Property Damage Only Collusion", following a more severe "Injury Collusion", an even more severe "Serious Injury Collusion", and finally the most severe, "Fatality Collusion", being the least likely occurrence. 
-```{r}
->>>>>>> 1af5d5ab849457346ab82ef9233e4242a73d3b21
+
+```{r sea_regression, include=FALSE}
 seattle_fat_no_fat<- merge(fatality_counts_sea, no_fatality_count_sea, by = "Year")
 seattle_totals <- merge(seattle_fat_no_fat, seattle_population, by = "Year")
 seattle_area <- 83.78
