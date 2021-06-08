@@ -355,3 +355,6 @@ tempe_regression
 ```
 
 ## 4. Conclusion
+
+In conclusion, our hypothesis was that as population density increased there would be a rise in fatal car accidents. The null hypothesis was that as population density increased, there would be little to no change in fatal car accidents. Based on the R-squared and p-values recorded in the Baton Rouge, Seattle and Tempe regressions, we fail to reject the null hypothesis. All of our p-values were >.05 which indicated that we could not reject the null hypothesis. 
+We do not find a lot of support for our hypothesis based on our data and analysis, so more research is necessary. A major limitation of our analysis is that we only looked at 10 years. By looking at a trend over 50 years we could learn more about the causes of fatal accidents, their frequency, and the trend in them with respect to growing and declining populations in cities. We were also limited in the quality of data that we used. Since a lot of this data comes from police reports, there is the possibility of human error and a misrepresentation of some aspects of data. We can also not say with certainty that all accidents were reported, and we cannot measure how many were unreported. 
