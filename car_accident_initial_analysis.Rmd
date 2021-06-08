@@ -315,7 +315,7 @@ print(fatality_plot + ggtitle("Number of Car Accidents in Baton Rouge from 2010-
 baton_rouge_regression
 ```
 
-In Seatlle, the only two trends that one can see in this graph is that the number of fatalities and number of non fatalities in car accidents stay relatively consistent year over year.
+In Seattle, the only two trends that one can see in the scatterplot is that the number of fatalities and number of non fatalities in car accidents stay relatively consistent year over year. There seems to be a slight decline in the number of total accidents and fatalities during the 10 year period. We fail to reject the null hypothesis due to the p-value being extremely too high to fit the .05 significance level. 
 ```{r trents_seattle_scatterplot_regression}
 print(fatality_plot_sea + ggtitle("Number of Car Accidents in Seattle from 2012-2019"))
 
