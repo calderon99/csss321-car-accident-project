@@ -65,7 +65,6 @@ br_data$SECOND.FACTOR[br_data$SECOND.FACTOR == ""] <- "NONE"
 ```{r br_summary}
 br_summary <- summary(br_data)
 br_summary
-# number_na <- sum(is.na(br_data))
 ```
 
 ```{r br_desc_stats, include=FALSE}
