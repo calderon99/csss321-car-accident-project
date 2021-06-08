@@ -167,8 +167,6 @@ tempe_filter <- tempe_filter[!(tempe_filter$AlcoholUse_Drv1 == ""), ]
 
 ```{r tempe summary}
 #2012-2019
-# count(tempe_filter, Totalfatalities > 0 & Year == 2013) REMOVE
-# only 87 accidents with fatalities
 
 summary(tempe_filter)
 ```
@@ -180,9 +178,7 @@ ggplot(tempe_filter) +
   theme(axis.text.x = element_text(size = 6))
 ```
 ```{r tempe stacked bar plot}
-#test dont work
-#(tempe_filter) +
- # geom_bar(aes(x = Injuryseverity, y = n), stat = "Year")
+
 
 #testing aggregating counts for stacked bar chart
 tempe_aggregate <- count(tempe_filter, Year, Totalinjuries, AlcoholUse_Drv1)
@@ -200,10 +196,6 @@ tempe_alcinf <- ggplot(tempe_aggregate) +
 
 #makes multiple charts for each year
 tempe_alcinf + facet_wrap(~ Year)
- 
-#need to find proportions instead of counts to account for the much higher number
-#of occurances for non-influence driving
-
 
 ```
 
