@@ -293,7 +293,18 @@ tempe_totals$pop_density <- (tempe_totals$Population/tempe_area)
 tempe_regression <- summary(lm(Fatalities ~ pop_density + Year, data = tempe_totals))
 tempe_regression
 ```
+```{r tempe scatterplot, include=FALSE}
 
+
+tempe_fatality_plot <- ggplot() +
+  geom_point(data = tempe_totals, aes(Year, Fatalities), colour = "red") +
+  geom_point(data = tempe_totals, aes(Year, no_fatalities), colour = "blue") +
+  scale_y_continuous(trans = 'log2') +
+  ylab("Total Number of Fatalities") +
+  xlab("Year")
+
+
+```
 ## 1. Introduction
 For our final report we decided to study car crash data in 3 US cities, Baton Rouge, Louisiana; Seattle, Washington; and Tempe, Arizona. We chose these three cities because of their similarities and differences. Baton Rouge is a relatively stagnant city with respect to population and area, neither having grown much in the past 10 years, with population actually slightly declining. Seattle, because it has not increased in area, but its a;ready high population has increased at the third fastest rate in the country. Finally, we chose Tempe because has also been increasing a rapid rate, but it has a lower population than Seattle. The differing populations in these cities and their trends are what inclined us to chose them, as well as having the most available and most well documented data that we could find. Our research question in these three cities was: how accurate of a predictor is population density with respect to fatal car accidents?
 
@@ -324,7 +335,9 @@ seattle_regression
 #Dylan's Analysis of Tempe data HERE
 ```{r dylans_scatterplot_regression}
 #copy past your print(function+ggtitle) here. DO NOT DELETE ANY CODE, JUST COPY PASTE
+print(tempe_fatality_plot + ggtitle("Fatalities in Tempe Accidents 2012-2019"))
 
+tempe_regression
 #copy paste regression output here
 ```
 
