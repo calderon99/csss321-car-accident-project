@@ -188,7 +188,6 @@ no_fatality_count_sea$date <- as.numeric(no_fatality_count_sea$date)
 
 ```
 
-<<<<<<< HEAD
 ```{r}
 ##Did my best, not sure why its not running
 fatality_plot_sea <- ggplot() +
