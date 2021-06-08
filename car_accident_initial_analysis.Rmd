@@ -155,11 +155,11 @@ seattle_data$date <- strptime(as.character(seattle_data$INCDTTM), "%m/%d/%Y")
 seattle_data$date <- format(seattle_data$date, "%Y")
 
 ##Change blanks to NA & fix columns
-seattle_data$ADDRTYPE[seattle_data$ADDRTYPE == ""] <- "NA"
-seattle_data$UNDERINFL[seattle_data$UNDERINFL == ""] <- "NA"
-seattle_data$UNDERINFL[seattle_data$UNDERINFL == "0"] <- "NA"
-seattle_data$SPEEDING[seattle_data$SPEEDING == ""] <- "N"
-seattle_data$SEVERITYDESC[seattle_data$SEVERITYDESC == "Unknown"] <- "NA"
+seattle_data$ADDRTYPE[seattle_data$ADDRTYPE == ""] <- NA
+seattle_data$UNDERINFL[seattle_data$UNDERINFL == ""] <- NA
+seattle_data$UNDERINFL[seattle_data$UNDERINFL == "0"] <- NA
+seattle_data$SPEEDING[seattle_data$SPEEDING == ""] <- NA
+seattle_data$SEVERITYDESC[seattle_data$SEVERITYDESC == "Unknown"] <- NA
 seattle_data$FATALITIES[seattle_data$FATALITIES == "2"] <- "1"
 seattle_data$FATALITIES[seattle_data$FATALITIES == "5"] <- "1"
 
@@ -236,8 +236,6 @@ tempe_severity_plot <- ggplot(tempe_filter) +
 print(tempe_severity_plot + ggtitle("Basic Plot Summarizing Injuries in Tempe"))
 ```
 ```{r tempe stacked bar plot}
-
-
 #testing aggregating counts for stacked bar chart
 tempe_aggregate <- count(tempe_filter, Year, Totalinjuries, AlcoholUse_Drv1)
 
