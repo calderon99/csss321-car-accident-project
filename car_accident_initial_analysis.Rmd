@@ -186,9 +186,12 @@ summary(tempe_filter)
 
 ```{r tempe injury plot}
 #simple barplot
-ggplot(tempe_filter) +
+tempe_severity_plot <- ggplot(tempe_filter) +
   geom_bar(aes(x = Injuryseverity)) +
-  theme(axis.text.x = element_text(size = 6))
+  theme(axis.text.x = element_text(size = 6)) +
+  xlab("Severity of Injury") +
+  ylab("Number of Injuries")
+print(tempe_severity_plot + ggtitle("Basic Plot Summarizing Injuries in Tempe"))
 ```
 ```{r tempe stacked bar plot}
 
@@ -208,7 +211,7 @@ tempe_alcinf <- ggplot(tempe_aggregate) +
   geom_col(aes(x = AlcoholUse_Drv1, y = n, fill = Totalinjuries))
 
 #makes multiple charts for each year
-tempe_alcinf + facet_wrap(~ Year)
+print(tempe_alcinf + facet_wrap(~ Year) + ggtitle("Faceted Stacked Charts Showing Injuries Caused by Alcohol Influence"))
 
 ```
 
@@ -225,8 +228,6 @@ tempepop_2019 <- 187454
 
 #tempe area mi^2
 tempe_area <- 40.22
-
-count(tempe_filter, Year == 2012 & Totalfatalities == 0)
 
 
 #filters fatalities by year
