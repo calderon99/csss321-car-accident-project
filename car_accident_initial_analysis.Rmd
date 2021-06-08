@@ -31,6 +31,8 @@ Our hypothesis is that fatalities increase as population density increases. We b
 ## 2. Data Descriptions
 We found out data of data.gov, a site that compiles statistical data that the government produces. There were tons of different datasets to chose from, whether national, state, city, town, county, etc. However, after looking through all the options, the Baton Rouge, Seattle, and Tempe datasets, seemed more complete, most detailed, and most up to date. Once we started looking at the data, we decided to narrow down our focus to more specific variables such as year, fatality, injury, and factors/causes of accidents.
 
+`https://catalog.data.gov/dataset?tags=crash&_res_format_limit=0`
+
 ## Baton Rouge Data
 ```{r baton_rouge_maniputalion, include=FALSE}
 baton_rouge <- select(baton_rouge_data, CRASH.DATE, OCCURED.ON, FATALITY, INJURY, PRIMARY.FACTOR, SECOND.FACTOR, PEDESTRIAN)
