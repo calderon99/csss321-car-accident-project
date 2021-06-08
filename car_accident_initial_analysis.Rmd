@@ -90,7 +90,7 @@ print(fatality_plot + ggtitle("Number of Car Accidents in Baton Rouge from 2010-
 fatality_count_br <- br_fatality %>% group_by(br_fatality$year) %>% count()
 no_fatality_count_br <- br_no_fatality %>% group_by(br_no_fatality$year) %>% count()
 ```
-```{r descript_plot}
+```{r descript_plot, include=FALSE}
 br_desc_plot <- ggplot(accident_totals, aes(x=total_obs, y=primary_reason)) +
   geom_bar(stat="identity") +
   ylab("Cause of Accident") +
@@ -174,7 +174,6 @@ fatality_plot_sea <- ggplot() +
   xlab("Year")
 print(fatality_plot_sea + ggtitle("Number of Car Accidents in Seattle from 2012-2019"))
 ```
-The only two trends that one can see in this graph is that the number of fatalities and number of non fatalities in car accidents stay relatively consistent year over year.
 
 ```{r sea_plots, include=FALSE}
 ##Plot Severity of Accidents
@@ -315,11 +314,12 @@ print(fatality_plot + ggtitle("Number of Car Accidents in Baton Rouge from 2010-
 
 baton_rouge_regression
 ```
-#Trent's Analysis of Seattle data HERE
-```{r trents_seattle_scatterplot_regression}
-#copy past your print(function+ggtitle) here. DO NOT DELETE ANY CODE, JUST COPY PASTE
 
-#copy paste regression output here
+In Seatlle, the only two trends that one can see in this graph is that the number of fatalities and number of non fatalities in car accidents stay relatively consistent year over year.
+```{r trents_seattle_scatterplot_regression}
+print(fatality_plot_sea + ggtitle("Number of Car Accidents in Seattle from 2012-2019"))
+
+seattle_regression
 ```
 #Dylan's Analysis of Tempe data HERE
 ```{r dylans_scatterplot_regression}
